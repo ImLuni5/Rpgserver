@@ -1,0 +1,5 @@
+main\EventHandler\EventListener.class
+main\CMDHandler\PartyHandler.class
+main\Main.class
+main\TimerHandler\PartyInviteTimer.class
+main\CMDHandler\CMDHandler.class

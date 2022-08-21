@@ -2,3 +2,6 @@ name: Lemon
 main: main.Main
 version: 1.0.0
 api-version: 1.18
+commands:
+  파티:
+    description: 파티명령어

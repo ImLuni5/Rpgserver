@@ -1,0 +1,9 @@
+
+^
+java:S1192#"HDefine a constant instead of duplicating this literal "friend." 6 times.(êü¯º
+l
+java:S1104"VMake friendData a static final constant or non-public and provide accessors if needed.(³÷Ùì
+F
+java:S1444"0Make this "public static friendData" field final(³÷Ùì
+/
+java:S1700"Rename field "friendData"(³÷Ùì

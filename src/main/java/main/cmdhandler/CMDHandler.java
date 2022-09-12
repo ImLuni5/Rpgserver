@@ -18,7 +18,7 @@ public class CMDHandler implements TabExecutor {
         switch (s) {
             case "파티" -> PartyHandler.onCommand(commandSender, strings);
             case "친구" -> FriendHandler.onCommand(commandSender, strings);
-            case "귓속말" -> DMHandler.onCommand(commandSender, strings);
+            case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, strings);
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
         }
         return false;
@@ -44,8 +44,8 @@ public class CMDHandler implements TabExecutor {
                 if (strings[0].equals("차단")) return Arrays.asList("추가", "해제");
                 else if (strings[0].equals("삭제")) {
                     List<String> friendList = new ArrayList<>();
-                    for (UUID uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
-                        friendList.add(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName());
+                    for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
+                        friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
                     return friendList;
                 }
             }

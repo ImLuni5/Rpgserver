@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,30 +32,32 @@ public class FriendData {
         }
     }
 
-    public static List<UUID> getPlayerFriendList(UUID player) {
-        return (List<UUID>) friendData.getList("friend." + player);
+    public static List<String> getPlayerFriendList(UUID player) {
+        if (friendData.getList("friend." + player) == null) return new ArrayList<>();
+        return friendData.getStringList("friend." + player);
     }
 
-    public static List<UUID> getPlayerIgnoreList(UUID player) {
-        return (List<UUID>) friendData.getList("ignore." + player);
+    public static List<String> getPlayerIgnoreList(UUID player) {
+        if (friendData.getList("ignore." + player) == null) return new ArrayList<>();
+        return friendData.getStringList("ignore." + player);
     }
 
     public static void addFriend(UUID player, UUID friend) {
-        List<UUID> playerFriendList = getPlayerFriendList(player);
-        List<UUID> friendFriendList = getPlayerFriendList(friend);
-        playerFriendList.add(friend);
-        friendFriendList.add(player);
+        List<String> playerFriendList = getPlayerFriendList(player);
+        List<String> friendFriendList = getPlayerFriendList(friend);
+        playerFriendList.add(friend.toString());
+        friendFriendList.add(player.toString());
         friendData.set("friend." + player, playerFriendList);
         friendData.set("friend." + friend, friendFriendList);
         saveData();
     }
 
     public static boolean removeFriend(UUID player, UUID friend) {
-        List<UUID> playerFriendList = getPlayerFriendList(player);
-        List<UUID> friendFriendList = getPlayerFriendList(friend);
-        if (playerFriendList.contains(friend)) {
-            playerFriendList.remove(friend);
-            friendFriendList.remove(player);
+        List<String> playerFriendList = getPlayerFriendList(player);
+        List<String> friendFriendList = getPlayerFriendList(friend);
+        if (playerFriendList.contains(friend.toString())) {
+            playerFriendList.remove(friend.toString());
+            friendFriendList.remove(player.toString());
             friendData.set("friend." + player, playerFriendList);
             friendData.set("friend." + friend, friendFriendList);
             saveData();
@@ -63,10 +66,10 @@ public class FriendData {
     }
 
     public static boolean addIgnore(UUID player, UUID friend) {
-        List<UUID> playerIgnoreList = getPlayerIgnoreList(player);
-        if (!playerIgnoreList.contains(friend)) {
+        List<String> playerIgnoreList = getPlayerIgnoreList(player);
+        if (!playerIgnoreList.contains(friend.toString())) {
             removeFriend(player, friend);
-            playerIgnoreList.add(friend);
+            playerIgnoreList.add(friend.toString());
             friendData.set("ignore." + player, playerIgnoreList);
             saveData();
             return true;
@@ -74,9 +77,9 @@ public class FriendData {
     }
 
     public static boolean removeIgnore(UUID player, UUID friend) {
-        List<UUID> playerIgnoreList = getPlayerIgnoreList(player);
-        if (playerIgnoreList.contains(friend)) {
-            playerIgnoreList.remove(friend);
+        List<String> playerIgnoreList = getPlayerIgnoreList(player);
+        if (playerIgnoreList.contains(friend.toString())) {
+            playerIgnoreList.remove(friend.toString());
             friendData.set("friend." + player, playerIgnoreList);
             saveData();
             return true;

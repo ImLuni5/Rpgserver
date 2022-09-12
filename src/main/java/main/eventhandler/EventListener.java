@@ -56,10 +56,10 @@ public class EventListener implements Listener {
             e.getPlayer().setScoreboard(board);
         }, 0, 20L);
         taskId.put(e.getPlayer(), tmpTaskId);
-        if (FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()) != null) {
-            for (UUID uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
-                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(uuid)))
-                    Objects.requireNonNull(Bukkit.getPlayer(uuid)).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속했습니다."));
+        if (!FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()).isEmpty()) {
+            for (String uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
+                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(UUID.fromString(uuid))))
+                    Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속했습니다."));
             }
         }
     }
@@ -69,10 +69,10 @@ public class EventListener implements Listener {
         Bukkit.getScheduler().cancelTask(taskId.get(e.getPlayer()));
         taskId.remove(e.getPlayer());
         e.quitMessage(Component.text(Main.INDEX + e.getPlayer().getName() + "님이 퇴장하셨습니다."));
-        if (FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()) != null) {
-            for (UUID uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
-                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(uuid)))
-                    Objects.requireNonNull(Bukkit.getPlayer(uuid)).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다."));
+        if (!FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()).isEmpty()) {
+            for (String uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
+                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(UUID.fromString(uuid))))
+                    Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다."));
             }
         }
         //파티에 소속되었는지 확인
@@ -107,7 +107,10 @@ public class EventListener implements Listener {
             e.setCancelled(true);
             TextComponent component = (TextComponent) e.message();
             for (Player player : PartyHandler.getParty().get(PartyHandler.getPlayerParty().get(e.getPlayer())))
-                player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | " + e.getPlayer().getName() + ": " + component.content());
+                if (Boolean.TRUE.equals(PartyHandler.getIsPartyOwner().getOrDefault(player, false)))
+                    player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | 파티장 | " + e.getPlayer().getName() + ": " + component.content());
+                else
+                    player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | " + e.getPlayer().getName() + ": " + component.content());
         }
     }
 

@@ -15,9 +15,11 @@ public class CMDHandler implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
 
-        if (s.equals("파티")) PartyHandler.onCommand(commandSender, strings);
-        else if (s.equals("친구")) FriendHandler.onCommand(commandSender, strings);
-
+        switch (s) {
+            case "파티" -> PartyHandler.onCommand(commandSender, strings);
+            case "친구" -> FriendHandler.onCommand(commandSender, strings);
+            case "귓속말", "귓말", "귓", "tell", "msg", "w" -> DMHandler.onCommand(commandSender, strings);
+        }
         return false;
     }
 
@@ -38,7 +40,7 @@ public class CMDHandler implements TabExecutor {
                         friendList.add(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName());
                     return friendList;
                 }
-            }
+            } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) return List.of();
         }
         return null;
     }

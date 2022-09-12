@@ -5,6 +5,7 @@ import main.timerhandler.PartyInviteTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -19,11 +20,11 @@ public class PartyHandler {
     private static final String NOT_OWNER = "§c파티의 리더가 아닙니다.";
     private static final String NOT_IN_PARTY = "§c당신은 파티에 소속 돼 있지 않습니다.";
 
-    public static void onCommand(CommandSender commandSender, String[] args) {
+    public static void onCommand(CommandSender commandSender, String @NotNull [] args) {
         // 명령어 외에 아무 구문도 안쳤을때
-        String NoArguments = Main.INDEX + "/파티 생성 <이름> - 파티를 생성합니다.\n" + Main.INDEX + "/파티 해산 - 파티를 해산합니다.\n" + Main.INDEX + "/파티 초대 <플레이어> - 플레이어를 파티에 초대합니다.\n" + Main.INDEX + "/파티 수락 - 파티 초대를 수락합니다.\n" + Main.INDEX + "/파티 거절 - 파티 초대를 거절합니다.\n" + Main.INDEX + "/파티 파티장위임 <플레이어> - 파티장을 위임합니다.\n" + Main.INDEX + "/파티 목록 - 파티원 목록을 확인합니다.\n" + Main.INDEX + "/파티 강퇴 <플레이어> - 파티원을 강퇴합니다.\n" + Main.INDEX + "/파티 채팅 - 파티 채팅모드를 키거나 끕니다.\n" + Main.INDEX + "/파티 나가기 - 파티에서 나갑니다.\n";
+        String noArguments = Main.INDEX + "/파티 생성 <이름> - 파티를 생성합니다.\n" + Main.INDEX + "/파티 해산 - 파티를 해산합니다.\n" + Main.INDEX + "/파티 초대 <플레이어> - 플레이어를 파티에 초대합니다.\n" + Main.INDEX + "/파티 수락 - 파티 초대를 수락합니다.\n" + Main.INDEX + "/파티 거절 - 파티 초대를 거절합니다.\n" + Main.INDEX + "/파티 파티장위임 <플레이어> - 파티장을 위임합니다.\n" + Main.INDEX + "/파티 목록 - 파티원 목록을 확인합니다.\n" + Main.INDEX + "/파티 강퇴 <플레이어> - 파티원을 강퇴합니다.\n" + Main.INDEX + "/파티 채팅 - 파티 채팅모드를 키거나 끕니다.\n" + Main.INDEX + "/파티 나가기 - 파티에서 나갑니다.\n";
         if (args.length == 0) {
-            commandSender.sendMessage(NoArguments);
+            commandSender.sendMessage(noArguments);
             return;
         }
         switch (args[0]) {
@@ -209,7 +210,7 @@ public class PartyHandler {
                 } else commandSender.sendMessage(Main.INDEX + NOT_IN_PARTY);
                 break;
             default:
-                commandSender.sendMessage(NoArguments);
+                commandSender.sendMessage(noArguments);
         }
     }
 

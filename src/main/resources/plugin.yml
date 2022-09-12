@@ -2,11 +2,14 @@ name: Lemon
 main: main.Main
 version: 1.0.0
 api-version: 1.18
+softdepend: [ Vault ]
 commands:
   파티:
     description: 파티 명령어
   친구:
     description: 친구 명령어
+  돈:
+    description: 돈 명령어
   귓속말:
     description: 귓속말 명령어
-    aliases: [귓, 귓말, w, msg, tell]
+    aliases: [ 귓, 귓말, w, msg, tell ]

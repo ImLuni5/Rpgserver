@@ -18,7 +18,8 @@ public class CMDHandler implements TabExecutor {
         switch (s) {
             case "파티" -> PartyHandler.onCommand(commandSender, strings);
             case "친구" -> FriendHandler.onCommand(commandSender, strings);
-            case "귓속말", "귓말", "귓", "tell", "msg", "w" -> DMHandler.onCommand(commandSender, strings);
+            case "귓속말" -> DMHandler.onCommand(commandSender, strings);
+            case "돈" -> MoneyHandler.onCommand(commandSender, strings);
         }
         return false;
     }
@@ -29,8 +30,15 @@ public class CMDHandler implements TabExecutor {
         Player player = (Player) commandSender;
 
         if (strings.length == 1) {
-            if (s.equals("파티")) return Arrays.asList("생성", "해산", "초대", "수락", "거절", "파티장위임", "목록", "강퇴", "채팅", "나가기");
-            else if (s.equals("친구")) return Arrays.asList("추가", "수락", "거절", "삭제", "목록", "차단", "차단목록");
+            switch (s) {
+                case "파티":
+                    return Arrays.asList("생성", "해산", "초대", "수락", "거절", "파티장위임", "목록", "강퇴", "채팅", "나가기");
+                case "친구":
+                    return Arrays.asList("추가", "수락", "거절", "삭제", "목록", "차단", "차단목록");
+                case "돈":
+                    if (player.isOp()) return Arrays.asList("보내기", "주기", "뺏기");
+                    return Arrays.asList("보내기");
+            }
         } else if (strings.length == 2) {
             if (s.equals("친구")) {
                 if (strings[0].equals("차단")) return Arrays.asList("추가", "해제");
@@ -40,7 +48,7 @@ public class CMDHandler implements TabExecutor {
                         friendList.add(Objects.requireNonNull(Bukkit.getPlayer(uuid)).getName());
                     return friendList;
                 }
-            } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) return List.of();
+            }
         }
         return null;
     }

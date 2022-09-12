@@ -4,8 +4,10 @@ import main.cmdhandler.CMDHandler;
 import main.datahandler.FriendData;
 import main.eventhandler.EventListener;
 import main.timerhandler.PartyInviteTimer;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -15,10 +17,21 @@ import java.util.logging.Logger;
 public class Main extends JavaPlugin {
 
     public static final String INDEX = "§6[§e§lLemon§6]§f ";
+    private static final Logger log = Logger.getLogger("Minecraft");
+    private static Economy econ = null;
+
+
     PluginDescriptionFile pdf = this.getDescription();
 
     @Override
     public void onEnable() {
+
+        // 이코노미 불러오기
+        if (!setupEconomy()) {
+            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // 데이터 로드
         FriendData.loadData();
@@ -39,6 +52,24 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         Logger.getGlobal().log(Level.FINE, "ㅂ2");
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            System.out.println("발트가 없노");
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            System.out.println("이코노미가 없노");
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
+
+    public static Economy getEconomy() {
+        return econ;
     }
 
 

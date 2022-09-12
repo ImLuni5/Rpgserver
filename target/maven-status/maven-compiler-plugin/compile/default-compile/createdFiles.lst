@@ -1,5 +1,7 @@
-main\EventHandler\EventListener.class
-main\CMDHandler\PartyHandler.class
+main\cmdhandler\MoneyHandler.class
+main\cmdhandler\DMHandler.class
+main\eventhandler\EventListener.class
+main\cmdhandler\PartyHandler.class
+main\timerhandler\PartyInviteTimer.class
 main\Main.class
-main\TimerHandler\PartyInviteTimer.class
-main\CMDHandler\CMDHandler.class
+main\cmdhandler\CMDHandler.class

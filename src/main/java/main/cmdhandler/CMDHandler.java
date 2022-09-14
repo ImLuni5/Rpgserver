@@ -28,16 +28,22 @@ public class CMDHandler implements TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
 
         Player player = (Player) commandSender;
-
         if (strings.length == 1) {
             switch (s) {
                 case "파티":
                     return Arrays.asList("생성", "해산", "초대", "수락", "거절", "파티장위임", "목록", "강퇴", "채팅", "나가기");
                 case "친구":
                     return Arrays.asList("추가", "수락", "거절", "삭제", "목록", "차단", "차단목록");
+                case "귓속말", "귓말", "귓", "tell", "msg", "w":
+                    List<String> dmList = new ArrayList<>();
+                    dmList.add("설정");
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        dmList.add(p.getName());
+                    }
+                    return dmList;
                 case "돈":
                     if (player.isOp()) return Arrays.asList("보내기", "주기", "뺏기");
-                    return Arrays.asList("보내기");
+                    return List.of("보내기");
             }
         } else if (strings.length == 2) {
             if (s.equals("친구")) {
@@ -47,6 +53,10 @@ public class CMDHandler implements TabExecutor {
                     for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
                         friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
                     return friendList;
+                }
+            } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) {
+                if (strings[0].equals("설정")) {
+                    return Arrays.asList("모두에게", "친구에게", "받지않음");
                 }
             }
         }

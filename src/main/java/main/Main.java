@@ -2,6 +2,7 @@ package main;
 
 import main.cmdhandler.CMDHandler;
 import main.datahandler.FriendData;
+import main.datahandler.SettingsData;
 import main.eventhandler.EventListener;
 import main.timerhandler.PartyInviteTimer;
 import net.milkbowl.vault.economy.Economy;
@@ -35,6 +36,7 @@ public class Main extends JavaPlugin {
 
         // 데이터 로드
         FriendData.loadData();
+        SettingsData.loadData();
 
         // 이벤트 리스너 등록
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);

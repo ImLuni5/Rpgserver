@@ -31,11 +31,12 @@ public class FriendHandler {
                         player.sendMessage(Main.INDEX + "§c이미 해당 플레이어와 친구입니다.");
                     else if (FriendRequestTimer.getPlayerInviteTime().containsKey(friend))
                         player.sendMessage(Main.INDEX + "§c누군가가 해당 플레이어에게 친구 요청을 보냈습니다.");
-                    else if (FriendData.getPlayerIgnoreList(player.getUniqueId()).contains(friend.getUniqueId().toString()) || FriendData.getPlayerIgnoreList(friend.getUniqueId()).contains(player.getUniqueId()))
+                    else if (FriendData.getPlayerIgnoreList(player.getUniqueId()).contains(friend.getUniqueId().toString()) || FriendData.getPlayerIgnoreList(friend.getUniqueId()).contains(player.getUniqueId().toString()))
                         player.sendMessage(Main.INDEX + "§c해당 플레이어에게 친구 요청을 보낼 수 없습니다.");
                     else {
                         FriendRequestTimer.getPlayerInviteOwner().put(Bukkit.getPlayer(args[1]), player);
                         FriendRequestTimer.getPlayerInviteTime().put(Bukkit.getPlayer(args[1]), 60);
+                        player.sendMessage(Main.INDEX + "해당 플레이어에게 성공적으로 친구 요청을 보냈습니다.");
                         Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 친구 추가 요청을 보냈습니다. 60초 이내에 응답해주세요. (/친구 수락/거절)");
                     }
                 }

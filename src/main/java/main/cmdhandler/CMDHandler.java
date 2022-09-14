@@ -35,12 +35,17 @@ public class CMDHandler implements TabExecutor {
                 case "친구":
                     return Arrays.asList("추가", "수락", "거절", "삭제", "목록", "차단", "차단목록");
                 case "귓속말", "귓말", "귓", "tell", "msg", "w":
-                    List<String> dmList = new ArrayList<>();
-                    dmList.add("설정");
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        dmList.add(p.getName());
+                    if (strings[0].contains("설")) {
+                        return List.of("설정");
+                    } else if (strings[0].isEmpty()) {
+                        List<String> dmList = new ArrayList<>();
+                        dmList.add("설정");
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            dmList.add(p.getName());
+                        }
+                        return dmList;
                     }
-                    return dmList;
+                    return null;
                 case "돈":
                     if (player.isOp()) return Arrays.asList("보내기", "주기", "뺏기");
                     return List.of("보내기");
@@ -56,6 +61,13 @@ public class CMDHandler implements TabExecutor {
                 }
             } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) {
                 if (strings[0].equals("설정")) {
+                    if (strings[1].contains("모")) {
+                        return List.of("모두에게");
+                    } else if (strings[1].contains("친")) {
+                        return List.of("친구에게");
+                    } else if (strings[1].contains("받")) {
+                        return List.of("받지않음");
+                    }
                     return Arrays.asList("모두에게", "친구에게", "받지않음");
                 }
             }

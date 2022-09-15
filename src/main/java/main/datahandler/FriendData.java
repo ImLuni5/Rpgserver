@@ -52,7 +52,7 @@ public class FriendData {
         saveData();
     }
 
-    public static boolean removeFriend(UUID player, UUID friend) {
+    public static void removeFriend(UUID player, UUID friend) {
         List<String> playerFriendList = getPlayerFriendList(player);
         List<String> friendFriendList = getPlayerFriendList(friend);
         if (playerFriendList.contains(friend.toString())) {
@@ -61,8 +61,7 @@ public class FriendData {
             friendData.set("friend." + player, playerFriendList);
             friendData.set("friend." + friend, friendFriendList);
             saveData();
-            return true;
-        } else return false;
+        }
     }
 
     public static boolean addIgnore(UUID player, UUID friend) {

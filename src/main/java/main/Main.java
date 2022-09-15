@@ -22,7 +22,7 @@ public class Main extends JavaPlugin {
     private static Economy econ = null;
 
 
-    PluginDescriptionFile pdf = this.getDescription();
+    final PluginDescriptionFile pdf = this.getDescription();
 
     @Override
     public void onEnable() {

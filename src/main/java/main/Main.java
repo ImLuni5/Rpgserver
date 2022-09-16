@@ -27,6 +27,9 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        // 플러그인 활성화 메시지 전송
+        Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§a플러그인이 활성화되었습니다.");
+
         // 이코노미 불러오기
         if (!setupEconomy()) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));

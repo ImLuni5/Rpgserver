@@ -18,7 +18,7 @@ public class CMDHandler implements TabExecutor {
         switch (s) {
             case "파티" -> PartyHandler.onCommand(commandSender, strings);
             case "친구" -> FriendHandler.onCommand(commandSender, strings);
-            case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, strings);
+            case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, command, strings);
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
         }
         return false;

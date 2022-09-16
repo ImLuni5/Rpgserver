@@ -11,8 +11,6 @@ public class SettingsData {
     public static FileConfiguration settingsData;
     private static final File settings = new File("GameData/settingsData.yml");
 
-    // 제 뇌로 파일 코드를 이해하지 못해서 일단 루니님꺼 배꼈습니다
-
     public static void loadData() {
         settingsData = YamlConfiguration.loadConfiguration(settings);
         try {

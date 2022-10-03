@@ -30,13 +30,13 @@ public class SettingsData {
         }
     }
 
-    public static Integer getPlayerSettings(UUID player) {
-        if (settingsData.getInt("dmOption." + player) == 0) return 1;
-        return settingsData.getInt("dmOption." + player);
+    public static Integer getPlayerSettings(String Option, UUID player) {
+        if (settingsData.getInt(Option + "." + player) == 0) return 1;
+        return settingsData.getInt(Option + "." + player);
     }
 
-    public static void setSettings(UUID player, Integer settings) {
-        settingsData.set("dmOption." + player, settings);
+    public static void setSettings(String Option, UUID player, Integer settings) {
+        settingsData.set(Option + "." + player, settings);
         saveData();
     }
 }

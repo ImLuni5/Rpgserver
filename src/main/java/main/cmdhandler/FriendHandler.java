@@ -2,14 +2,18 @@ package main.cmdhandler;
 
 import main.Main;
 import main.datahandler.FriendData;
+import main.datahandler.SettingsData;
 import main.timerhandler.FriendRequestTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
+
+import static main.cmdhandler.PartyHandler.party;
+import static main.cmdhandler.PartyHandler.playerParty;
 
 public class FriendHandler {
     public static void onCommand(CommandSender commandSender, String[] args) {
@@ -22,6 +26,7 @@ public class FriendHandler {
         }
         switch (args[0]) {
             case "추가":
+
                 if (args.length == 1) player.sendMessage(Main.INDEX + "§c사용법: /친구 추가 <플레이어>");
                 else {
                     Player friend = Bukkit.getPlayer(args[1]);
@@ -31,9 +36,20 @@ public class FriendHandler {
                         player.sendMessage(Main.INDEX + "§c이미 해당 플레이어와 친구입니다.");
                     else if (FriendRequestTimer.getPlayerInviteTime().containsKey(friend))
                         player.sendMessage(Main.INDEX + "§c누군가가 해당 플레이어에게 친구 요청을 보냈습니다.");
+                    else if (SettingsData.getPlayerSettings("friendOption", friend.getUniqueId()) == 3)
+                        player.sendMessage(Main.INDEX + "§c해당 플레이어는 친구 요청을 받지 않도록 설정했습니다.");
                     else if (FriendData.getPlayerIgnoreList(player.getUniqueId()).contains(friend.getUniqueId().toString()) || FriendData.getPlayerIgnoreList(friend.getUniqueId()).contains(player.getUniqueId().toString()))
                         player.sendMessage(Main.INDEX + "§c해당 플레이어에게 친구 요청을 보낼 수 없습니다.");
-                    else {
+                    else if (SettingsData.getPlayerSettings("friendOption", friend.getUniqueId()) == 2) {
+                        List<Player> playerList = party.get(playerParty.get(friend));
+                        if (playerList == null) player.sendMessage(Main.INDEX + "§c해당 플레이어는 친구 요청을 파티원에게만 받도록 설정했습니다.");
+                        else if (playerList.contains(player)) {
+                            FriendRequestTimer.getPlayerInviteOwner().put(Bukkit.getPlayer(args[1]), player);
+                            FriendRequestTimer.getPlayerInviteTime().put(Bukkit.getPlayer(args[1]), 60);
+                            player.sendMessage(Main.INDEX + "해당 플레이어에게 성공적으로 친구 요청을 보냈습니다.");
+                            Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 친구 추가 요청을 보냈습니다. 60초 이내에 응답해주세요. (/친구 수락/거절)");
+                        } else player.sendMessage(Main.INDEX + "§c해당 플레이어는 친구 요청을 파티원에게만 받도록 설정했습니다.");
+                    } else {
                         FriendRequestTimer.getPlayerInviteOwner().put(Bukkit.getPlayer(args[1]), player);
                         FriendRequestTimer.getPlayerInviteTime().put(Bukkit.getPlayer(args[1]), 60);
                         player.sendMessage(Main.INDEX + "해당 플레이어에게 성공적으로 친구 요청을 보냈습니다.");
@@ -61,9 +77,10 @@ public class FriendHandler {
             case "삭제":
                 if (args.length == 1) player.sendMessage(Main.INDEX + "§c사용법: /친구 삭제 <플레이어>");
                 else if (Bukkit.getPlayer(args[1]) == null) player.sendMessage(Main.INDEX + "§c존재하지 않는 플레이어입니다.");
-                else if (FriendData.addIgnore(player.getUniqueId(), Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId()))
+                else if (FriendData.getPlayerFriendList(player.getUniqueId()).contains(Bukkit.getPlayer(args[1]).getUniqueId().toString())) {
+                    FriendData.removeFriend(player.getUniqueId(), Bukkit.getPlayer(args[1]).getUniqueId());
                     player.sendMessage(Main.INDEX + args[1] + "님을 친구 목록에서 삭제했습니다.");
-                else player.sendMessage(Main.INDEX + "§c이미 그 플레이어와는 친구가 아닙니다.");
+                }  else player.sendMessage(Main.INDEX + "§c이미 그 플레이어와는 친구가 아닙니다.");
                 break;
             case "목록":
                 StringBuilder message = new StringBuilder(Main.INDEX + "친구 목록");

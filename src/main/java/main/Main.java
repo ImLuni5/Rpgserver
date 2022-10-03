@@ -4,6 +4,7 @@ import main.cmdhandler.CMDHandler;
 import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
 import main.eventhandler.EventListener;
+import main.eventhandler.IClickHandler;
 import main.timerhandler.PartyInviteTimer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -43,6 +44,7 @@ public class Main extends JavaPlugin {
 
         // 이벤트 리스너 등록
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);
+        Bukkit.getPluginManager().registerEvents(new IClickHandler(), this);
 
         // 타이머 시작
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);

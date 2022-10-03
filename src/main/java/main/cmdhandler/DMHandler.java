@@ -22,28 +22,28 @@ public class DMHandler {
         if (args[0].equals("설정")) {
             switch (args[1]) {
                 case "모두에게" -> {
-                    if (SettingsData.getPlayerSettings(p.getUniqueId()) == 1) {
+                    if (SettingsData.getPlayerSettings("dmOption", p.getUniqueId()) == 1) {
                         p.sendMessage(Main.INDEX + "§c이미 모든 플레이어에게서 귓속말을 받습니다.");
                     } else {
-                        SettingsData.setSettings(p.getUniqueId(), 1);
+                        SettingsData.setSettings("dmOption", p.getUniqueId(), 1);
                         p.sendMessage(Main.INDEX + "§a이제 모든 플레이어에게서 귓속말을 받습니다.");
                     }
                     return;
                 }
                 case "친구에게" -> {
-                    if (SettingsData.getPlayerSettings(p.getUniqueId()) == 2) {
+                    if (SettingsData.getPlayerSettings("dmOption", p.getUniqueId()) == 2) {
                         p.sendMessage(Main.INDEX + "§c이미 친구에게서만 귓속말을 받습니다.");
                     } else {
-                        SettingsData.setSettings(p.getUniqueId(), 2);
+                        SettingsData.setSettings("dmOption", p.getUniqueId(), 2);
                         p.sendMessage(Main.INDEX + "§a이제 친구에게서만 귓속말을 받습니다.");
                     }
                     return;
                 }
                 case "받지않음" -> {
-                    if (SettingsData.getPlayerSettings(p.getUniqueId()) == 3) {
+                    if (SettingsData.getPlayerSettings("dmOption", p.getUniqueId()) == 3) {
                         p.sendMessage(Main.INDEX + "§c이미 모든 귓속말을 받지 않습니다.");
                     } else {
-                        SettingsData.setSettings(p.getUniqueId(), 3);
+                        SettingsData.setSettings("dmOption", p.getUniqueId(), 3);
                         p.sendMessage(Main.INDEX + "§a이제 모든 귓속말을 받지 않습니다.");
                     }
                     return;
@@ -64,13 +64,13 @@ public class DMHandler {
             p.sendMessage(Main.INDEX + "§c자기 자신에게 귓속말을 보낼 수 없습니다.");
             return;
         // 귓속말 받는 사람이 친구에게만 받도록 설정했을때
-        } else if (SettingsData.getPlayerSettings(dm.getUniqueId()) == 2) {
+        } else if (SettingsData.getPlayerSettings("dmOption", dm.getUniqueId()) == 2) {
             if (!FriendData.getPlayerFriendList(dm.getUniqueId()).contains(p.getUniqueId().toString())) {
                 p.sendMessage(Main.INDEX + "§c해당 플레이어는 친구에게만 귓속말을 받도록 설정했습니다.");
                 return;
             }
         // 귓속말 받는 사람이 모든 귓속말 차단했을때
-        } else if (SettingsData.getPlayerSettings(dm.getUniqueId()) == 3) {
+        } else if (SettingsData.getPlayerSettings("dmOption", dm.getUniqueId()) == 3) {
             p.sendMessage(Main.INDEX + "§c해당 플레이어는 귓속말을 받지 않도록 설정했습니다.");
             return;
         // 귓속말 받는 사람 또는 보내는 사람이 서로를 차단했을때

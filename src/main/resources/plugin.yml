@@ -13,3 +13,6 @@ commands:
   귓속말:
     description: 귓속말 명령어
     aliases: [ 귓, 귓말, w, msg, tell ]
+  설정:
+    description: 설정 명령어
+    aliases: [settings]

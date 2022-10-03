@@ -20,6 +20,7 @@ public class CMDHandler implements TabExecutor {
             case "친구" -> FriendHandler.onCommand(commandSender, strings);
             case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, command, strings);
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
+            case "설정", "settings" -> SettingsHandler.onCommand(commandSender);
         }
         return false;
     }
@@ -89,6 +90,7 @@ public class CMDHandler implements TabExecutor {
                     List<String> friendList = new ArrayList<>();
                     for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
                         friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
+                    if (List.of(friendList) == null) return null;
                     return friendList;
                 }
             } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) {

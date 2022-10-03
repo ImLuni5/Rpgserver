@@ -4,6 +4,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import main.Main;
 import main.cmdhandler.PartyHandler;
 import main.datahandler.FriendData;
+import main.datahandler.SettingsData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -26,7 +27,12 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        e.joinMessage(Component.text(Main.INDEX + e.getPlayer().getName() + "님이 접속하셨습니다."));
+        e.joinMessage(null);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (SettingsData.getPlayerSettings("joinMessageOption", p.getUniqueId()) == 2) {
+                if (FriendData.getPlayerFriendList(p.getUniqueId()).contains(e.getPlayer().getUniqueId().toString())) p.sendMessage(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속하셨습니다.");
+            } else if (SettingsData.getPlayerSettings("joinMessageOption", p.getUniqueId()) == 1) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 접속하셨습니다.");
+        }
         int tmpTaskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
             ScoreboardManager manager = Bukkit.getScoreboardManager();
             final Scoreboard board = manager.getNewScoreboard();
@@ -58,8 +64,11 @@ public class EventListener implements Listener {
         taskId.put(e.getPlayer(), tmpTaskId);
         if (!FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()).isEmpty()) {
             for (String uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
-                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(UUID.fromString(uuid))))
-                    Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속했습니다."));
+                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(UUID.fromString(uuid)))) {
+                    if (SettingsData.getPlayerSettings("joinMessageOption", UUID.fromString(uuid)) != 3) {
+                        Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속했습니다."));
+                    }
+                }
             }
         }
     }
@@ -68,11 +77,19 @@ public class EventListener implements Listener {
     public void onQuit(PlayerQuitEvent e) {
         Bukkit.getScheduler().cancelTask(taskId.get(e.getPlayer()));
         taskId.remove(e.getPlayer());
-        e.quitMessage(Component.text(Main.INDEX + e.getPlayer().getName() + "님이 퇴장하셨습니다."));
+        e.quitMessage(null);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (SettingsData.getPlayerSettings("joinMessageOption", p.getUniqueId()) == 2) {
+                if (FriendData.getPlayerFriendList(p.getUniqueId()).contains(e.getPlayer().getUniqueId().toString())) p.sendMessage(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다.");
+            } else if (SettingsData.getPlayerSettings("joinMessageOption", p.getUniqueId()) == 1) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 퇴장했습니다.");
+        }
         if (!FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()).isEmpty()) {
             for (String uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
-                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(UUID.fromString(uuid))))
-                    Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다."));
+                if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(UUID.fromString(uuid)))) {
+                    if (SettingsData.getPlayerSettings("joinMessageOption", UUID.fromString(uuid)) != 3) {
+                        Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다."));
+                    }
+                }
             }
         }
         //파티에 소속되었는지 확인

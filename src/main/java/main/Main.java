@@ -5,6 +5,9 @@ import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
 import main.eventhandler.EventListener;
 import main.eventhandler.IClickHandler;
+import main.timerhandler.CMDCooldownTimer;
+import main.timerhandler.FriendRequestTimer;
+import main.timerhandler.InvCooldownTimer;
 import main.timerhandler.PartyInviteTimer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -48,6 +51,9 @@ public class Main extends JavaPlugin {
 
         // 타이머 시작
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new FriendRequestTimer(), 0L, 20L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new InvCooldownTimer(), 0L, 1L);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CMDCooldownTimer(), 0L, 20L);
 
         // 명령어 등록
         pdf.getCommands().keySet().forEach(s -> {

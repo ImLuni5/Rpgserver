@@ -4,14 +4,13 @@ import main.Main;
 import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class DMHandler {
 
-    public static void onCommand(CommandSender commandSender, Command command, String[] args) {
-        final String noArguments = Main.INDEX + "/" + command + " <플레이어> <메시지> - 플레이어에게 귓속말을 보냅니다.\n" + Main.INDEX + "/귓속말 설정 모두에게 - 모두에게 귓속말을 받도록 설정합니다.\n" + Main.INDEX + "/귓속말 설정 친구에게 - 친구에게만 귓속말을 받도록 설정합니다.\n" + Main.INDEX + "/귓속말 설정 받지않음 - 귓속말을 받지 않습니다.";
+    public static void onCommand(CommandSender commandSender, String[] args) {
+        final String noArguments = Main.INDEX + "/귓속말 <플레이어> <메시지> - 플레이어에게 귓속말을 보냅니다.\n" + Main.INDEX + "/귓속말 설정 모두에게 - 모두에게 귓속말을 받도록 설정합니다.\n" + Main.INDEX + "/귓속말 설정 친구에게 - 친구에게만 귓속말을 받도록 설정합니다.\n" + Main.INDEX + "/귓속말 설정 받지않음 - 귓속말을 받지 않습니다.";
         Player p = (Player) commandSender;
         // 아무것도 입력하지 않았을 때
         if (args.length < 2) {

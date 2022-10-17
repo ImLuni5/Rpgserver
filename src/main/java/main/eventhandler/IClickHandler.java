@@ -1,6 +1,7 @@
 package main.eventhandler;
 
 import main.datahandler.SettingsData;
+import main.timerhandler.InvCooldownTimer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,6 +20,8 @@ public class IClickHandler implements Listener {
         Player p = (Player) e.getWhoClicked();
         if (e.getView().title().equals(Component.text("설정 GUI"))) {
             e.setCancelled(true);
+            if (InvCooldownTimer.getInvClickCooldown().containsKey(p)) return;
+            else InvCooldownTimer.getInvClickCooldown().put(p, 5);
             if (e.getSlot() == 19) {
                 p.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 100, 1);
                 ItemStack dmOptionSet = new ItemStack(Material.PAPER);

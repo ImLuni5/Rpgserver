@@ -1,6 +1,8 @@
 package main.cmdhandler;
 
+import main.Main;
 import main.datahandler.FriendData;
+import main.timerhandler.CMDCooldownTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,11 +16,22 @@ import java.util.*;
 public class CMDHandler implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-
+        if (CMDCooldownTimer.getCMDClickStack().containsKey((Player) commandSender)) {
+            for (Map.Entry<Player, Integer> e : CMDCooldownTimer.getCMDClickStack().entrySet()) {
+               if (e.getKey().equals(commandSender) && e.getValue() >= 4) {
+                   if (e.getValue() < 5) e.setValue(e.getValue()+1);
+                   commandSender.sendMessage(Main.INDEX + "§c커맨드 사용이 너무 빠릅니다. 잠시 후에 다시 시도해주세요.");
+                   return true;
+               } else {
+                   e.setValue(e.getValue()+1);
+                   break;
+               }
+            }
+        } else CMDCooldownTimer.getCMDClickStack().put((Player) commandSender, 1);
         switch (s) {
             case "파티" -> PartyHandler.onCommand(commandSender, strings);
             case "친구" -> FriendHandler.onCommand(commandSender, strings);
-            case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, command, strings);
+            case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, strings);
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
             case "설정", "settings" -> SettingsHandler.onCommand(commandSender);
         }

@@ -16,3 +16,6 @@ commands:
   설정:
     description: 설정 명령어
     aliases: [settings]
+  나침반:
+    description: 나침반 명령어
+    aliases: [ compass ]

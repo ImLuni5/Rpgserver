@@ -34,6 +34,7 @@ public class CMDHandler implements TabExecutor {
             case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, strings);
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
             case "설정", "settings" -> SettingsHandler.onCommand(commandSender);
+            case "compass", "나침반" -> CompassHandler.onCommand(commandSender, strings);
         }
         return false;
     }
@@ -44,6 +45,9 @@ public class CMDHandler implements TabExecutor {
         Player player = (Player) commandSender;
         if (strings.length == 1) {
             switch (s) {
+                case "나침반", "compass" -> {
+                    return List.of("track");
+                }
                 case "파티" -> {
                     if (strings[0].contains("생")) return List.of("생성");
                     else if (strings[0].contains("해")) return List.of("해산");
@@ -93,7 +97,11 @@ public class CMDHandler implements TabExecutor {
                 }
             }
         } else if (strings.length == 2) {
-            if (s.equals("친구")) {
+            if (s.equals("나침반") || s.equals("compass")) {
+                List<String> list = new ArrayList<>(List.of("clear"));
+                for (Player p : Bukkit.getOnlinePlayers()) list.add(p.getName());
+                return list;
+            } else if (s.equals("친구")) {
                 if (strings[0].equals("차단")) {
                     if (strings[1].contains("추")) return List.of("추가");
                     else if (strings[1].contains("해")) return List.of("해제");
@@ -103,7 +111,7 @@ public class CMDHandler implements TabExecutor {
                     List<String> friendList = new ArrayList<>();
                     for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
                         friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
-                    if (List.of(friendList) == null) return null;
+                    if (List.of(friendList).isEmpty()) return null;
                     return friendList;
                 }
             } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) {

@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static main.Main.SCHEDULER;
+
 public class EventListener implements Listener {
 
     private static final HashMap<Player, Integer> taskId = new HashMap<>();
@@ -33,7 +35,7 @@ public class EventListener implements Listener {
                 if (FriendData.getPlayerFriendList(p.getUniqueId()).contains(e.getPlayer().getUniqueId().toString())) p.sendMessage(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속하셨습니다.");
             } else if (SettingsData.getPlayerSettings("joinMessageOption", p.getUniqueId()) == 1) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 접속하셨습니다.");
         }
-        int tmpTaskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
+        int tmpTaskId = SCHEDULER.scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
             ScoreboardManager manager = Bukkit.getScoreboardManager();
             final Scoreboard board = manager.getNewScoreboard();
             final Objective objective = board.registerNewObjective("test", "dummy", Component.text("내 정보"));
@@ -75,7 +77,7 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        Bukkit.getScheduler().cancelTask(taskId.get(e.getPlayer()));
+        SCHEDULER.cancelTask(taskId.get(e.getPlayer()));
         taskId.remove(e.getPlayer());
         e.quitMessage(null);
         for (Player p : Bukkit.getOnlinePlayers()) {

@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Objects;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 public class Main extends JavaPlugin {
 
     public static final String INDEX = "§6[§e§lLemon§6]§f ";
+    public static final BukkitScheduler SCHEDULER = Bukkit.getScheduler();
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
 
@@ -50,10 +52,10 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new IClickHandler(), this);
 
         // 타이머 시작
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new FriendRequestTimer(), 0L, 20L);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new InvCooldownTimer(), 0L, 1L);
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CMDCooldownTimer(), 0L, 20L);
+        SCHEDULER.scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);
+        SCHEDULER.scheduleSyncRepeatingTask(this, new FriendRequestTimer(), 0L, 20L);
+        SCHEDULER.scheduleSyncRepeatingTask(this, new InvCooldownTimer(), 0L, 1L);
+        SCHEDULER.scheduleSyncRepeatingTask(this, new CMDCooldownTimer(), 0L, 20L);
 
         // 명령어 등록
         pdf.getCommands().keySet().forEach(s -> {

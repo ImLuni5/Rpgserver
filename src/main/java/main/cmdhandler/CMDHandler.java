@@ -97,33 +97,36 @@ public class CMDHandler implements TabExecutor {
                 }
             }
         } else if (strings.length == 2) {
-            if (s.equals("나침반") || s.equals("compass")) {
-                List<String> list = new ArrayList<>(List.of("clear"));
-                for (Player p : Bukkit.getOnlinePlayers()) list.add(p.getName());
-                return list;
-            } else if (s.equals("친구")) {
-                if (strings[0].equals("차단")) {
-                    if (strings[1].contains("추")) return List.of("추가");
-                    else if (strings[1].contains("해")) return List.of("해제");
-                    return Arrays.asList("추가", "해제");
+            switch (s) {
+                case "나침반", "compass" -> {
+                    List<String> list = new ArrayList<>(List.of("clear"));
+                    for (Player p : Bukkit.getOnlinePlayers()) list.add(p.getName());
+                    return list;
                 }
-                else if (strings[0].equals("삭제")) {
-                    List<String> friendList = new ArrayList<>();
-                    for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
-                        friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
-                    if (friendList.isEmpty()) return null;
-                    return friendList;
-                }
-            } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) {
-                if (strings[0].equals("설정")) {
-                    if (strings[1].contains("모")) {
-                        return List.of("모두에게");
-                    } else if (strings[1].contains("친")) {
-                        return List.of("친구에게");
-                    } else if (strings[1].contains("받")) {
-                        return List.of("받지않음");
+                case "친구" -> {
+                    if (strings[0].equals("차단")) {
+                        if (strings[1].contains("추")) return List.of("추가");
+                        else if (strings[1].contains("해")) return List.of("해제");
+                        return Arrays.asList("추가", "해제");
+                    } else if (strings[0].equals("삭제")) {
+                        List<String> friendList = new ArrayList<>();
+                        for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
+                            friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
+                        if (friendList.isEmpty()) return null;
+                        return friendList;
                     }
-                    return Arrays.asList("모두에게", "친구에게", "받지않음");
+                }
+                case "귓속말", "귓말", "귓", "tell", "msg", "w" -> {
+                    if (strings[0].equals("설정")) {
+                        if (strings[1].contains("모")) {
+                            return List.of("모두에게");
+                        } else if (strings[1].contains("친")) {
+                            return List.of("친구에게");
+                        } else if (strings[1].contains("받")) {
+                            return List.of("받지않음");
+                        }
+                        return Arrays.asList("모두에게", "친구에게", "받지않음");
+                    }
                 }
             }
         }

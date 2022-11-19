@@ -38,7 +38,7 @@ public class EventListener implements Listener {
         int tmpTaskId = SCHEDULER.scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
             ScoreboardManager manager = Bukkit.getScoreboardManager();
             final Scoreboard board = manager.getNewScoreboard();
-            final Objective objective = board.registerNewObjective("test", "dummy", Component.text("내 정보"));
+            final Objective objective = board.registerNewObjective("test", Criteria.DUMMY, Component.text("내 정보"));
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             Score score = objective.getScore(" ");
             score.setScore(10);

@@ -111,7 +111,7 @@ public class CMDHandler implements TabExecutor {
                     List<String> friendList = new ArrayList<>();
                     for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
                         friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
-                    if (List.of(friendList).isEmpty()) return null;
+                    if (friendList.isEmpty()) return null;
                     return friendList;
                 }
             } else if (s.equals("귓속말") || s.equals("귓말") || s.equals("귓") || s.equals("tell") || s.equals("msg") || s.equals("w")) {

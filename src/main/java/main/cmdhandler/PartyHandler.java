@@ -13,11 +13,11 @@ import java.util.*;
 
 public class PartyHandler {
 
-    static final Map<String, List<Player>> party = new HashMap<>();
+    private static final Map<String, List<Player>> party = new HashMap<>();
     private static final Map<String, Player> partyOwner = new HashMap<>();
     private static final Map<Player, Boolean> isPartyOwner = new HashMap<>();
     private static final Map<Player, Boolean> isPartyChat = new HashMap<>();
-    static final Map<Player, String> playerParty = new HashMap<>();
+    private static final Map<Player, String> playerParty = new HashMap<>();
 
     private static final String NOT_OWNER = "§c파티의 리더가 아닙니다.";
     private static final String NOT_IN_PARTY = "§c당신은 파티에 소속 돼 있지 않습니다.";
@@ -30,7 +30,7 @@ public class PartyHandler {
             return;
         }
         switch (args[0]) {
-            case "생성":
+            case "생성" -> {
                 //파티 이름 안적었을때
                 if (args.length == 1) commandSender.sendMessage(Main.INDEX + "§c사용법: /파티 생성 <이름>");
                 else {
@@ -55,8 +55,8 @@ public class PartyHandler {
                     playerParty.put((Player) commandSender, args[1]);
                     commandSender.sendMessage(Main.INDEX + args[1] + "파티가 생성되었습니다.");
                 }
-                break;
-            case "해산":
+            }
+            case "해산" -> {
                 // 파티 리더인지 확인
                 if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
                     // 파티 해산
@@ -70,29 +70,29 @@ public class PartyHandler {
                     }
                     commandSender.sendMessage(Main.INDEX + "파티가 해산되었습니다.");
                 } else commandSender.sendMessage(Main.INDEX + NOT_OWNER);
-                break;
-            case "초대":
+            }
+            case "초대" -> {
+                Player inviter = Bukkit.getPlayer(args[1]);
                 // 파티 리더인지 확인
                 if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
                     //플레이어 이름을 적었는지 확인
                     if (args.length == 1) commandSender.sendMessage(Main.INDEX + "§c사용법: /파티 초대 <닉네임>");
                         //플레이어가 온라인인지 확인
-                    else if (!Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[1])))
+                    else if (!Bukkit.getOnlinePlayers().contains(inviter))
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 온라인이 아닙니다.");
                         // 플레이어가 초대를 받았는지 확인
-                    else if (PartyInviteTimer.getPlayerInviteTime().containsKey(Bukkit.getPlayer(args[1])))
+                    else if (PartyInviteTimer.getPlayerInviteTime().containsKey(inviter))
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 이미 누군가가 초대를 보냈습니다.");
                         // 플레이어가 파티에 소속되었는지 확인
-                    else if (playerParty.containsKey(Bukkit.getPlayer(args[1])))
+                    else if (playerParty.containsKey(inviter))
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 이미 파티에 소속되어 있습니다.");
                         //플레이어가 파티를 받지 않게 설정했는지 확인
-                    else if (SettingsData.getPlayerSettings("partyOption", Bukkit.getPlayer(args[1]).getUniqueId()) == 3)
+                    else if (SettingsData.getPlayerSettings("partyOption", inviter.getUniqueId()) == 3)
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 파티 초대를 받지 않게 설정했습니다.");
                         //플레이어가 파티를 친구에게서만 받게 설정했는지 확인
-                    else if (SettingsData.getPlayerSettings("partyOption", Bukkit.getPlayer(args[1]).getUniqueId()) == 2)
-                        if (FriendData.getPlayerFriendList(Bukkit.getPlayer(args[1]).getUniqueId()).contains(((Player) commandSender).getUniqueId().toString())) {
+                    else if (SettingsData.getPlayerSettings("partyOption", inviter.getUniqueId()) == 2)
+                        if (FriendData.getPlayerFriendList(inviter.getUniqueId()).contains(((Player) commandSender).getUniqueId().toString())) {
                             //초대장 발송
-                            Player inviter = Bukkit.getPlayer(args[1]);
                             commandSender.sendMessage(Main.INDEX + args[1] + "님에게 초대장을 발송했습니다.");
                             inviter.sendMessage(Main.INDEX + commandSender.getName() + "님이 당신에게 파티를 초대했습니다. 파티에 들어오시겠습니까? 60초 이내에 응답해주세요. </파티 수락 or /파티 거절>");
                             PartyInviteTimer.getPlayerInviteTime().put(inviter, 60);
@@ -100,15 +100,14 @@ public class PartyHandler {
                         } else commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 친구에게서만 파티 초대를 받게 설정했습니다.");
                         //초대장 발송
                     else {
-                        Player inviter = Bukkit.getPlayer(args[1]);
                         commandSender.sendMessage(Main.INDEX + args[1] + "님에게 초대장을 발송했습니다.");
                         inviter.sendMessage(Main.INDEX + commandSender.getName() + "님이 당신에게 파티를 초대했습니다. 파티에 들어오시겠습니까? 60초 이내에 응답해주세요. </파티 수락 or /파티 거절>");
                         PartyInviteTimer.getPlayerInviteTime().put(inviter, 60);
                         PartyInviteTimer.getPlayerInviteOwner().put(inviter, (Player) commandSender);
                     }
                 } else commandSender.sendMessage(NOT_OWNER);
-                break;
-            case "수락":
+            }
+            case "수락" -> {
                 // 파티를 초대받았는지 확인
                 if (PartyInviteTimer.getPlayerInviteTime().containsKey((Player) commandSender)) {
                     // 파티 수락
@@ -121,8 +120,8 @@ public class PartyHandler {
                     for (Player player : playerList)
                         player.sendMessage(Main.INDEX + commandSender.getName() + "님이 파티에 참가하였습니다.");
                 } else commandSender.sendMessage(Main.INDEX + "§c초대받은 파티가 없습니다.");
-                break;
-            case "거절":
+            }
+            case "거절" -> {
                 // 파티를 초대받았는지 확인
                 if (PartyInviteTimer.getPlayerInviteTime().containsKey((Player) commandSender)) {
                     // 파티 거절
@@ -131,8 +130,8 @@ public class PartyHandler {
                     PartyInviteTimer.getPlayerInviteOwner().remove((Player) commandSender);
                     PartyInviteTimer.getPlayerInviteTime().remove((Player) commandSender);
                 } else commandSender.sendMessage(Main.INDEX + "§c초대받은 파티가 없습니다.");
-                break;
-            case "파티장위임":
+            }
+            case "파티장위임" -> {
                 //파티 리더인지 확인
                 if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
                     //닉네임을 적었는지 확인
@@ -150,8 +149,8 @@ public class PartyHandler {
                         } else commandSender.sendMessage(Main.INDEX + "§c그 플레이어는 당신의 파티 소속이 아닙니다.");
                     }
                 } else commandSender.sendMessage(Main.INDEX + NOT_OWNER);
-                break;
-            case "목록":
+            }
+            case "목록" -> {
                 //파티에 소속됐는지 확인
                 if (playerParty.containsKey((Player) commandSender)) {
                     // 목록 보여주기
@@ -162,8 +161,8 @@ public class PartyHandler {
                     message.deleteCharAt(message.length() - 1);
                     commandSender.sendMessage(message.toString());
                 } else commandSender.sendMessage(Main.INDEX + NOT_IN_PARTY);
-                break;
-            case "강퇴":
+            }
+            case "강퇴" -> {
                 //파티 리더인지 확인
                 if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
                     //닉네임을 적었는지 확인
@@ -185,8 +184,8 @@ public class PartyHandler {
                         } else commandSender.sendMessage(Main.INDEX + "§c그 플레이어는 당신의 파티 소속이 아닙니다.");
                     }
                 } else commandSender.sendMessage(Main.INDEX + NOT_OWNER);
-                break;
-            case "채팅":
+            }
+            case "채팅" -> {
                 //파티에 소속되었는지 확인
                 if (playerParty.containsKey((Player) commandSender)) {
                     if (Boolean.TRUE.equals(isPartyChat.getOrDefault((Player) commandSender, false))) {
@@ -197,8 +196,8 @@ public class PartyHandler {
                         commandSender.sendMessage(Main.INDEX + "파티 채팅 모드가 켜졌습니다.");
                     }
                 } else commandSender.sendMessage(Main.INDEX + NOT_IN_PARTY);
-                break;
-            case "나가기":
+            }
+            case "나가기" -> {
                 //파티에 소속되었는지 확인
                 if (playerParty.containsKey((Player) commandSender)) {
                     // 파티에서 나가기
@@ -223,9 +222,8 @@ public class PartyHandler {
                         player.sendMessage(Main.INDEX + commandSender.getName() + "님이 파티에서 나갔습니다.");
                     commandSender.sendMessage(Main.INDEX + "파티에서 나갔습니다.");
                 } else commandSender.sendMessage(Main.INDEX + NOT_IN_PARTY);
-                break;
-            default:
-                commandSender.sendMessage(noArguments);
+            }
+            default -> commandSender.sendMessage(noArguments);
         }
     }
 

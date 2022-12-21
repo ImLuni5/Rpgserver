@@ -28,30 +28,26 @@ public class FriendHandler {
                 if (args.length == 1) player.sendMessage(Main.INDEX + "§c사용법: /친구 추가 <플레이어>");
                 else {
                     Player friend = Bukkit.getPlayer(args[1]);
+                    String friendSet = SettingsData.getSettings("friend", friend.getUniqueId());
+                    SettingsData.friendOption friendOption = SettingsData.friendOption.valueOf(friendSet);
                     if (!Bukkit.getOnlinePlayers().contains(friend))
                         player.sendMessage(Main.INDEX + "§c그 플레이어는 온라인이 아닙니다.");
                     else if (FriendData.getPlayerFriendList(player.getUniqueId()).contains(friend.getUniqueId().toString()))
                         player.sendMessage(Main.INDEX + "§c이미 해당 플레이어와 친구입니다.");
                     else if (FriendRequestTimer.getPlayerInviteTime().containsKey(friend))
                         player.sendMessage(Main.INDEX + "§c누군가가 해당 플레이어에게 친구 요청을 보냈습니다.");
-                    else if (SettingsData.getPlayerSettings("friendOption", friend.getUniqueId()) == 3)
+                    else if (friendOption == SettingsData.friendOption.NEVER)
                         player.sendMessage(Main.INDEX + "§c해당 플레이어는 친구 요청을 받지 않도록 설정했습니다.");
                     else if (FriendData.getPlayerIgnoreList(player.getUniqueId()).contains(friend.getUniqueId().toString()) || FriendData.getPlayerIgnoreList(friend.getUniqueId()).contains(player.getUniqueId().toString()))
                         player.sendMessage(Main.INDEX + "§c해당 플레이어에게 친구 요청을 보낼 수 없습니다.");
-                    else if (SettingsData.getPlayerSettings("friendOption", friend.getUniqueId()) == 2) {
+                    else if (friendOption == SettingsData.friendOption.PARTY) {
                         List<Player> playerList = PartyHandler.getParty().get(getPlayerParty().get(friend));
                         if (playerList == null) player.sendMessage(Main.INDEX + "§c해당 플레이어는 친구 요청을 파티원에게만 받도록 설정했습니다.");
                         else if (playerList.contains(player)) {
-                            FriendRequestTimer.getPlayerInviteOwner().put(Bukkit.getPlayer(args[1]), player);
-                            FriendRequestTimer.getPlayerInviteTime().put(Bukkit.getPlayer(args[1]), 60);
-                            player.sendMessage(Main.INDEX + "해당 플레이어에게 성공적으로 친구 요청을 보냈습니다.");
-                            Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 친구 추가 요청을 보냈습니다. 60초 이내에 응답해주세요. (/친구 수락/거절)");
+                            request(player, friend);
                         } else player.sendMessage(Main.INDEX + "§c해당 플레이어는 친구 요청을 파티원에게만 받도록 설정했습니다.");
                     } else {
-                        FriendRequestTimer.getPlayerInviteOwner().put(Bukkit.getPlayer(args[1]), player);
-                        FriendRequestTimer.getPlayerInviteTime().put(Bukkit.getPlayer(args[1]), 60);
-                        player.sendMessage(Main.INDEX + "해당 플레이어에게 성공적으로 친구 요청을 보냈습니다.");
-                        Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 친구 추가 요청을 보냈습니다. 60초 이내에 응답해주세요. (/친구 수락/거절)");
+                        request(player, friend);
                     }
                 }
             }
@@ -112,4 +108,12 @@ public class FriendHandler {
             default -> player.sendMessage(noArguments);
         }
     }
+
+    private static void request(Player player, Player friend) {
+        FriendRequestTimer.getPlayerInviteOwner().put(friend, player);
+        FriendRequestTimer.getPlayerInviteTime().put(friend, 60);
+        player.sendMessage(Main.INDEX + "해당 플레이어에게 성공적으로 친구 요청을 보냈습니다.");
+        friend.sendMessage(Main.INDEX + player.getName() + "님이 친구 추가 요청을 보냈습니다. 60초 이내에 응답해주세요. (/친구 수락/거절)");
+    }
+
 }

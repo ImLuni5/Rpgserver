@@ -73,6 +73,8 @@ public class PartyHandler {
             }
             case "초대" -> {
                 Player inviter = Bukkit.getPlayer(args[1]);
+                String inviterSet = SettingsData.getSettings("party", inviter.getUniqueId());
+                SettingsData.partyOption inviterOption = SettingsData.partyOption.valueOf(inviterSet);
                 // 파티 리더인지 확인
                 if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
                     //플레이어 이름을 적었는지 확인
@@ -87,23 +89,17 @@ public class PartyHandler {
                     else if (playerParty.containsKey(inviter))
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 이미 파티에 소속되어 있습니다.");
                         //플레이어가 파티를 받지 않게 설정했는지 확인
-                    else if (SettingsData.getPlayerSettings("partyOption", inviter.getUniqueId()) == 3)
+                    else if (inviterOption == SettingsData.partyOption.NEVER)
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 파티 초대를 받지 않게 설정했습니다.");
                         //플레이어가 파티를 친구에게서만 받게 설정했는지 확인
-                    else if (SettingsData.getPlayerSettings("partyOption", inviter.getUniqueId()) == 2)
+                    else if (inviterOption == SettingsData.partyOption.FRIENDS)
                         if (FriendData.getPlayerFriendList(inviter.getUniqueId()).contains(((Player) commandSender).getUniqueId().toString())) {
                             //초대장 발송
-                            commandSender.sendMessage(Main.INDEX + args[1] + "님에게 초대장을 발송했습니다.");
-                            inviter.sendMessage(Main.INDEX + commandSender.getName() + "님이 당신에게 파티를 초대했습니다. 파티에 들어오시겠습니까? 60초 이내에 응답해주세요. </파티 수락 or /파티 거절>");
-                            PartyInviteTimer.getPlayerInviteTime().put(inviter, 60);
-                            PartyInviteTimer.getPlayerInviteOwner().put(inviter, (Player) commandSender);
+                            invite((Player) commandSender, inviter);
                         } else commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 친구에게서만 파티 초대를 받게 설정했습니다.");
                         //초대장 발송
                     else {
-                        commandSender.sendMessage(Main.INDEX + args[1] + "님에게 초대장을 발송했습니다.");
-                        inviter.sendMessage(Main.INDEX + commandSender.getName() + "님이 당신에게 파티를 초대했습니다. 파티에 들어오시겠습니까? 60초 이내에 응답해주세요. </파티 수락 or /파티 거절>");
-                        PartyInviteTimer.getPlayerInviteTime().put(inviter, 60);
-                        PartyInviteTimer.getPlayerInviteOwner().put(inviter, (Player) commandSender);
+                        invite((Player) commandSender, inviter);
                     }
                 } else commandSender.sendMessage(NOT_OWNER);
             }
@@ -225,6 +221,13 @@ public class PartyHandler {
             }
             default -> commandSender.sendMessage(noArguments);
         }
+    }
+
+    private static void invite(Player player, Player inviter) {
+        player.sendMessage(Main.INDEX + inviter.getName() + "님에게 초대장을 발송했습니다.");
+        inviter.sendMessage(Main.INDEX + player.getName() + "님이 당신에게 파티를 초대했습니다. 파티에 들어오시겠습니까? 60초 이내에 응답해주세요. </파티 수락 or /파티 거절>");
+        PartyInviteTimer.getPlayerInviteTime().put(inviter, 60);
+        PartyInviteTimer.getPlayerInviteOwner().put(inviter, player);
     }
 
     public static Map<String, List<Player>> getParty() {

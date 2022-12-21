@@ -13,12 +13,12 @@ public class InvCooldownTimer implements Runnable {
     public void run() {
         if (!invClickCooldown.isEmpty()) {
             for (Map.Entry<Player, Integer> entry : invClickCooldown.entrySet()) {
+                // 인벤토리 클릭 쿨타임 0.05초(1틱)씩 감소
+                invClickCooldown.put(entry.getKey(), entry.getValue() - 1);
                 // 인벤토리 클릭 쿨타임 끝
                 if (entry.getValue() <= 0) {
                     invClickCooldown.remove(entry.getKey());
                 }
-                // 인벤토리 클릭 쿨타임 0.05초(1틱)씩 감소
-                invClickCooldown.put(entry.getKey(), entry.getValue() - 1);
             }
         }
     }

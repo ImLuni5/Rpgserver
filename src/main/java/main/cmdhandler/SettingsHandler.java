@@ -1,9 +1,11 @@
 package main.cmdhandler;
 
+import main.Main;
 import main.datahandler.SettingsData;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -13,6 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public class SettingsHandler {
+    public static void onCommand(CommandSender commandSender) {
+        if (commandSender instanceof Player p) {
+            openSettings(p);
+        } else commandSender.sendMessage(Main.INDEX + "이 명령어는 플레이어만 사용할 수 있습니다.");
+    }
     public static void openSettings(@NotNull Player p) {
         Inventory gui = Bukkit.createInventory(null, 36, Component.text("설정 GUI"));
         ItemStack blank = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);

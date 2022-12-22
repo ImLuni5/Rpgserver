@@ -33,9 +33,7 @@ public class CMDHandler implements TabExecutor {
             case "친구" -> FriendHandler.onCommand(commandSender, strings);
             case "귓속말", "귓말", "tell", "귓", "w", "msg" -> DMHandler.onCommand(commandSender, strings);
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
-            case "설정", "settings" -> {
-                if (commandSender instanceof Player p) SettingsHandler.openSettings(p);
-            }
+            case "설정", "settings" -> SettingsHandler.onCommand(commandSender);
             case "compass", "나침반" -> CompassHandler.onCommand(commandSender, strings);
         }
         return false;

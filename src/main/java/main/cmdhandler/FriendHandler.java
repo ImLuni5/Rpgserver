@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +16,7 @@ import java.util.UUID;
 import static main.cmdhandler.PartyHandler.getPlayerParty;
 
 public class FriendHandler {
-    public static void onCommand(CommandSender commandSender, String[] args) {
+    public static void onCommand(CommandSender commandSender, String @NotNull [] args) {
         Player player = (Player) commandSender;
         String noArguments = Main.INDEX + "/친구 추가 <플레이어> - 플레이어에게 친구 추가 요청을 보냅니다.\n" + Main.INDEX + "/친구 수락 - 친구 추가 요청을 수락합니다.\n" + Main.INDEX + "/친구 거절 - 친구 추가 요청을 거절합니다.\n" + Main.INDEX + "/친구 삭제 <플레이어> - 친구 목록에서 삭제합니다.\n" + Main.INDEX + "/친구 목록 - 친구 목록을 보여줍니다.\n" + Main.INDEX + "/친구 차단 추가 <플레이어> - 플레이어를 차단 합니다.\n" + Main.INDEX + "/친구 차단 해제 <플레이어> - 플레이어를 차단 해제 합니다.\n" + Main.INDEX + "/친구 차단목록 - 차단 목록을 보여줍니다.";
         // 명령어 외에 아무 구문도 안쳤을때

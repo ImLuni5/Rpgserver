@@ -8,11 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 public class SettingsHandler {
-    public static void openSettings(Player p) {
+    public static void openSettings(@NotNull Player p) {
         Inventory gui = Bukkit.createInventory(null, 36, Component.text("설정 GUI"));
         ItemStack blank = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
         ItemMeta blankMeta = blank.getItemMeta();

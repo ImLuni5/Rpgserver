@@ -2,6 +2,7 @@ package main.datahandler;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class SettingsData {
         saveData();
     }
 
-    public static void nextSettings(String Option, UUID uuid) {
+    public static void nextSettings(@NotNull String Option, UUID uuid) {
         switch (Option) {
             case "dm" -> {
                 if (dmOption.valueOf(getSettings("dm", uuid)) == dmOption.FRIENDS) {

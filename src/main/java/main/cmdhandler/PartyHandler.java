@@ -223,7 +223,7 @@ public class PartyHandler {
         }
     }
 
-    private static void invite(Player player, Player inviter) {
+    private static void invite(@NotNull Player player, @NotNull Player inviter) {
         player.sendMessage(Main.INDEX + inviter.getName() + "님에게 초대장을 발송했습니다.");
         inviter.sendMessage(Main.INDEX + player.getName() + "님이 당신에게 파티를 초대했습니다. 파티에 들어오시겠습니까? 60초 이내에 응답해주세요. </파티 수락 or /파티 거절>");
         PartyInviteTimer.getPlayerInviteTime().put(inviter, 60);

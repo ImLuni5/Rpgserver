@@ -2,6 +2,7 @@ package main.datahandler;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,12 +33,12 @@ public class FriendData {
         }
     }
 
-    public static List<String> getPlayerFriendList(UUID player) {
+    public static @NotNull List<String> getPlayerFriendList(UUID player) {
         if (friendData.getList("friend." + player) == null) return new ArrayList<>();
         return friendData.getStringList("friend." + player);
     }
 
-    public static List<String> getPlayerIgnoreList(UUID player) {
+    public static @NotNull List<String> getPlayerIgnoreList(UUID player) {
         if (friendData.getList("ignore." + player) == null) return new ArrayList<>();
         return friendData.getStringList("ignore." + player);
     }
@@ -64,7 +65,7 @@ public class FriendData {
         }
     }
 
-    public static boolean addIgnore(UUID player, UUID friend) {
+    public static boolean addIgnore(UUID player, @NotNull UUID friend) {
         List<String> playerIgnoreList = getPlayerIgnoreList(player);
         if (!playerIgnoreList.contains(friend.toString())) {
             removeFriend(player, friend);
@@ -75,7 +76,7 @@ public class FriendData {
         } else return false;
     }
 
-    public static boolean removeIgnore(UUID player, UUID friend) {
+    public static boolean removeIgnore(UUID player, @NotNull UUID friend) {
         List<String> playerIgnoreList = getPlayerIgnoreList(player);
         if (playerIgnoreList.contains(friend.toString())) {
             playerIgnoreList.remove(friend.toString());

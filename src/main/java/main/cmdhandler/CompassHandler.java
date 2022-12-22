@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -21,7 +22,7 @@ import static main.Main.SCHEDULER;
 public class CompassHandler {
     private static final HashMap<Player, Integer> coordTaskId = new HashMap<>();
     private static final HashMap<Player, Player> glowTarget = new HashMap<>();
-    public static void onCommand(CommandSender commandSender, String[] args) {
+    public static void onCommand(CommandSender commandSender, String @NotNull [] args) {
         Player p = (Player) commandSender;
         final String noArg = Main.INDEX + "/compass track <엔티티> - 엔티티를 추적합니다.\n" + Main.INDEX + "/compass track <x> <y> <z> - 해당 좌표의 블럭을 추적합니다.";
         if (args.length < 2) {

@@ -2,10 +2,7 @@ package main.cmdhandler;
 
 import main.Main;
 import main.datahandler.SettingsData;
-import main.datahandler.SettingsData.DmOption;
-import main.datahandler.SettingsData.FriendOption;
-import main.datahandler.SettingsData.JoinMsgOption;
-import main.datahandler.SettingsData.PartyOption;
+import main.datahandler.SettingsData.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

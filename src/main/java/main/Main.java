@@ -9,13 +9,22 @@ import main.timerhandler.CMDCooldownTimer;
 import main.timerhandler.FriendRequestTimer;
 import main.timerhandler.InvCooldownTimer;
 import main.timerhandler.PartyInviteTimer;
+import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -79,13 +88,25 @@ public class Main extends JavaPlugin {
             return false;
         }
         econ = rsp.getProvider();
-        return econ.isEnabled();
+        return true;
     }
 
     public static Economy getEconomy() {
         return econ;
     }
 
+    public static @NotNull ItemStack item(Material type, String name, @NotNull List<String> lore, boolean shiny) {
+        ItemStack itemStack = new ItemStack(type);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.displayName(Component.text(name));
+        List<Component> loreComponent = new ArrayList<>();
+        for (String s : lore) loreComponent.add(Component.text(s));
+        meta.lore(loreComponent);
+        if (shiny) meta.addEnchant(Enchantment.DURABILITY, 1, false);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
 
     //ㅎㅇ 여러분
     //mir님이 누구십니ㅏ

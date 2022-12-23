@@ -17,14 +17,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
 
     public static final String INDEX = "§6[§e§lLemon§6]§f ";
     public static final BukkitScheduler SCHEDULER = Bukkit.getScheduler();
-    private static final Logger log = Logger.getLogger("Minecraft");
+    private static final Logger log = Bukkit.getLogger();
     private static Economy econ = null;
 
 
@@ -66,7 +65,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Logger.getGlobal().log(Level.FINE, "ㅂ2");
+        log.info("ㅂ2");
     }
 
     private boolean setupEconomy() {
@@ -80,7 +79,7 @@ public class Main extends JavaPlugin {
             return false;
         }
         econ = rsp.getProvider();
-        return econ != null;
+        return econ.isEnabled();
     }
 
     public static Economy getEconomy() {

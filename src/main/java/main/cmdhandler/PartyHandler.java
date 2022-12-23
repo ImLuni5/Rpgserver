@@ -3,6 +3,7 @@ package main.cmdhandler;
 import main.Main;
 import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
+import main.datahandler.SettingsData.PartyOption;
 import main.timerhandler.PartyInviteTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -72,15 +73,17 @@ public class PartyHandler {
                 } else commandSender.sendMessage(Main.INDEX + NOT_OWNER);
             }
             case "초대" -> {
+                if (args.length == 1) commandSender.sendMessage(Main.INDEX + "§c사용법: /파티 초대 <닉네임>");
                 Player inviter = Bukkit.getPlayer(args[1]);
-                String inviterSet = SettingsData.getSettings("party", inviter.getUniqueId());
-                SettingsData.partyOption inviterOption = SettingsData.partyOption.valueOf(inviterSet);
+                if (inviter == null) {
+                    commandSender.sendMessage(Main.INDEX + "§c존재하지 않는 플레이어입니다.");
+                    return;
+                } String inviterSet = SettingsData.getSettings("party", inviter.getUniqueId());
+                PartyOption inviterOption = PartyOption.valueOf(inviterSet);
                 // 파티 리더인지 확인
                 if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
-                    //플레이어 이름을 적었는지 확인
-                    if (args.length == 1) commandSender.sendMessage(Main.INDEX + "§c사용법: /파티 초대 <닉네임>");
                         //플레이어가 온라인인지 확인
-                    else if (!Bukkit.getOnlinePlayers().contains(inviter))
+                    if (!Bukkit.getOnlinePlayers().contains(inviter))
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 온라인이 아닙니다.");
                         // 플레이어가 초대를 받았는지 확인
                     else if (PartyInviteTimer.getPlayerInviteTime().containsKey(inviter))
@@ -89,10 +92,10 @@ public class PartyHandler {
                     else if (playerParty.containsKey(inviter))
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 이미 파티에 소속되어 있습니다.");
                         //플레이어가 파티를 받지 않게 설정했는지 확인
-                    else if (inviterOption == SettingsData.partyOption.NEVER)
+                    else if (inviterOption == PartyOption.NEVER)
                         commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 파티 초대를 받지 않게 설정했습니다.");
                         //플레이어가 파티를 친구에게서만 받게 설정했는지 확인
-                    else if (inviterOption == SettingsData.partyOption.FRIENDS)
+                    else if (inviterOption == PartyOption.FRIENDS)
                         if (FriendData.getPlayerFriendList(inviter.getUniqueId()).contains(((Player) commandSender).getUniqueId().toString())) {
                             //초대장 발송
                             invite((Player) commandSender, inviter);

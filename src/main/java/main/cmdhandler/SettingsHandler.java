@@ -2,6 +2,10 @@ package main.cmdhandler;
 
 import main.Main;
 import main.datahandler.SettingsData;
+import main.datahandler.SettingsData.DmOption;
+import main.datahandler.SettingsData.FriendOption;
+import main.datahandler.SettingsData.JoinMsgOption;
+import main.datahandler.SettingsData.PartyOption;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,10 +36,10 @@ public class SettingsHandler {
         
         ItemStack dmOption;
         String playerDmSet = SettingsData.getSettings("dm", p.getUniqueId());
-        SettingsData.dmOption playerDmOption = SettingsData.dmOption.valueOf(playerDmSet);
-        if (playerDmOption == SettingsData.dmOption.FRIENDS) {
+        DmOption playerDmOption = DmOption.valueOf(playerDmSet);
+        if (playerDmOption == DmOption.FRIENDS) {
             dmOption = Main.item(Material.PAPER, "§e친구에게만 귓속말 받기", Arrays.asList("§7오직 당신의 친구만 ", "§7당신에게 귓속말을 보낼 수 있습니다.", "§7당신 또한 친구에게만", "§7귓속말을 보낼 수 있습니다.", " ", "§a  모두에게서 받기", "§b▶ 친구에게만 받기", "§c  받지 않기", " ", "§e클릭 시 §c받지 않기§e로 변경합니다."), true);
-        } else if (playerDmOption == SettingsData.dmOption.NEVER) {
+        } else if (playerDmOption == DmOption.NEVER) {
             dmOption = Main.item(Material.PAPER, "§c누구에게도 귓속말 받지 않기", Arrays.asList("§7그 누구도 당신에게", "§7귓속말을 보낼 수 없습니다.", "§7당신 또한 그 누구에게도", "§7귓속말을 보낼 수 없습니다.", " ", "§a  모두에게서 받기", "§b  친구에게만 받기", "§c▶ 받지 않기", " ", "§e클릭 시 §a모두에게서 받기§e로 변경합니다."), true);
         } else {
             dmOption = Main.item(Material.PAPER, "§a모두에게서 귓속말 받기", Arrays.asList("§7아무 플레이어나 당신에게", "§7귓속말을 보낼 수 있습니다.", "§7당신 또한 누구에게나", "§7귓속말을 보낼 수 있습니다.", " ", "§a▶ 모두에게서 받기", "§b  친구에게만 받기", "§c  받지 않기", " ", "§e클릭 시 §b친구에게만 받기§e로 변경합니다."), true);
@@ -44,10 +48,10 @@ public class SettingsHandler {
 
         ItemStack partyOption;
         String playerPartySet = SettingsData.getSettings("party", p.getUniqueId());
-        SettingsData.partyOption playerPartyOption = SettingsData.partyOption.valueOf(playerPartySet);
-        if (playerPartyOption == SettingsData.partyOption.FRIENDS) {
+        PartyOption playerPartyOption = PartyOption.valueOf(playerPartySet);
+        if (playerPartyOption == PartyOption.FRIENDS) {
             partyOption = Main.item(Material.PAPER, "§e친구에게만 파티 초대 받기", Arrays.asList("§7오직 당신의 친구만 ", "§7당신에게 파티 초대를 보낼 수 있습니다.", " ", "§a  모두에게서 받기", "§b▶ 친구에게만 받기", "§c  받지 않기", " ", "§e클릭 시 §c받지 않기§e로 변경합니다."), true);
-        } else if (playerPartyOption == SettingsData.partyOption.NEVER) {
+        } else if (playerPartyOption == PartyOption.NEVER) {
             partyOption = Main.item(Material.PAPER, "§c누구에게도 파티 초대 받지 않기", Arrays.asList("§7그 누구도 당신에게", "§7파티 초대를 보낼 수 없습니다.", " ", "§a  모두에게서 받기", "§b  친구에게만 받기", "§c▶ 받지 않기", " ", "§e클릭 시 §a모두에게서 받기§e로 변경합니다."), true);
         } else {
             partyOption = Main.item(Material.PAPER, "§a모두에게서 파티 초대 받기", Arrays.asList("§7아무 플레이어나 당신에게", "§7파티 초대를 보낼 수 있습니다.", " ", "§a▶ 모두에게서 받기", "§b  친구에게만 받기", "§c  받지 않기", " ", "§e클릭 시 §b친구에게만 받기§e로 변경합니다."),true);
@@ -56,10 +60,10 @@ public class SettingsHandler {
         
         ItemStack friendOption;
         String playerFriendSet = SettingsData.getSettings("friend", p.getUniqueId());
-        SettingsData.friendOption playerFriendOption = SettingsData.friendOption.valueOf(playerFriendSet);
-        if (playerFriendOption == SettingsData.friendOption.PARTY) {
+        FriendOption playerFriendOption = FriendOption.valueOf(playerFriendSet);
+        if (playerFriendOption == FriendOption.PARTY) {
             friendOption = Main.item(Material.PAPER, "§e파티원에게만 친구 요청 받기", Arrays.asList("§7오직 당신의 파티원만 ", "§7당신에게 친구 요청을 보낼 수 있습니다.", " ", "§a  모두에게서 받기", "§b▶ 파티원에게만 받기", "§c  받지 않기", " ", "§e클릭 시 §c받지 않기§e로 변경합니다."), true);
-        } else if (playerFriendOption == SettingsData.friendOption.NEVER) {
+        } else if (playerFriendOption == FriendOption.NEVER) {
             friendOption = Main.item(Material.PAPER, "§c누구에게도 친구 요청 받지 않기", Arrays.asList("§7그 누구도 당신에게", "§7친구 요청을 보낼 수 없습니다.", " ", "§a  모두에게서 받기", "§b  파티원에게만 받기", "§c▶ 받지 않기", " ", "§e클릭 시 §a모두에게서 받기§e로 변경합니다."), true);
         } else {
             friendOption = Main.item(Material.PAPER, "§a모두에게서 친구 요청 받기", Arrays.asList("§7아무 플레이어나 당신에게", "§7친구 요청을 보낼 수 있습니다.", " ", "§a▶ 모두에게서 받기", "§b  파티원에게만 받기", "§c  받지 않기", " ", "§e클릭 시 §b파티원에게만 받기§e로 변경합니다."), true);
@@ -68,10 +72,10 @@ public class SettingsHandler {
 
         ItemStack joinMsgOption;
         String playerJoinSet = SettingsData.getSettings("joinMsg", p.getUniqueId());
-        SettingsData.joinMsgOption playerJoinOption = SettingsData.joinMsgOption.valueOf(playerJoinSet);
-        if (playerJoinOption == SettingsData.joinMsgOption.FRIENDS) {
+        JoinMsgOption playerJoinOption = JoinMsgOption.valueOf(playerJoinSet);
+        if (playerJoinOption == JoinMsgOption.FRIENDS) {
             joinMsgOption = Main.item(Material.PAPER, "§e친구의 접속/퇴장 메시지만 보기", Arrays.asList("§7오직 당신의 친구의", "§7접속 메시지만을 볼 수 있습니다.", " ", "§a  모두 보기", "§b▶ 친구만 보기", "§c  보지 않기", " ", "§e클릭 시 §c보지 않기§e로 변경합니다."), true);
-        } else if (playerJoinOption == SettingsData.joinMsgOption.NEVER) {
+        } else if (playerJoinOption == JoinMsgOption.NEVER) {
             joinMsgOption = Main.item(Material.PAPER, "§c접속/퇴장 메시지 보지 않기", Arrays.asList("§7다른 플레이어의 접속 메시지와", "§7퇴장 메시지를 보지 않습니다.", " ", "§a  모두 보기", "§b  친구만 보기", "§c▶ 보지 않기", " ", "§e클릭 시 §a모두에게서 받기§e로 변경합니다."), true);
         } else {
             joinMsgOption = Main.item(Material.PAPER, "§a모두의 접속/퇴장 메시지 보기", Arrays.asList("§7모든 플레이어의 접속 메시지와", "§7퇴장 메시지를 볼 수 있습니다.", " ", "§a▶ 모두 보기", "§b  친구만 보기", "§c  보지 않기", " ", "§e클릭 시 §b친구에게만 받기§e로 변경합니다."), true);

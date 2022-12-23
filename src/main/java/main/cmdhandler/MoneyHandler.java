@@ -24,15 +24,16 @@ public class MoneyHandler {
             switch (args[0]) {
                 case "보내기" -> {
                     if (args.length < 3) player.sendMessage(Main.INDEX + "§c사용법: /돈 보내기 <플레이어> <돈>");
-                    else if (Bukkit.getPlayer(args[1]) == null) player.sendMessage(Main.INDEX + INVALID_PLAYER);
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) player.sendMessage(Main.INDEX + INVALID_PLAYER);
                     else {
                         if (econ.getBalance(player) >= Double.parseDouble(args[2])) {
                             EconomyResponse withdrawResponse = econ.withdrawPlayer(player, Double.parseDouble(args[2]));
                             if (withdrawResponse.transactionSuccess()) {
-                                EconomyResponse depositResponse = econ.depositPlayer(Bukkit.getPlayer(args[1]), Double.parseDouble(args[2]));
+                                EconomyResponse depositResponse = econ.depositPlayer(target, Double.parseDouble(args[2]));
                                 if (depositResponse.transactionSuccess()) {
                                     player.sendMessage(Main.INDEX + "성공적으로 " + args[1] + "님에게 " + args[2] + "원을 보냈습니다.");
-                                    Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 " + args[2] + "원을 보냈습니다.");
+                                    target.sendMessage(Main.INDEX + player.getName() + "님이 " + args[2] + "원을 보냈습니다.");
                                 } else {
                                     player.sendMessage(Main.INDEX + "§c돈을 보내는 것을 실패했습니다.");
                                     player.sendMessage(Main.INDEX + ChatColor.RED + depositResponse.errorMessage);
@@ -48,12 +49,13 @@ public class MoneyHandler {
                 case "주기" -> {
                     if (player.isOp()) {
                         if (args.length < 3) player.sendMessage(Main.INDEX + "§c사용법: /돈 주기 <플레이어> <돈>");
-                        else if (Bukkit.getPlayer(args[1]) == null) player.sendMessage(Main.INDEX + INVALID_PLAYER);
+                        Player target = Bukkit.getPlayer(args[1]);
+                        if (target == null) player.sendMessage(Main.INDEX + INVALID_PLAYER);
                         else {
-                            EconomyResponse depositResponse = econ.depositPlayer(Bukkit.getPlayer(args[1]), Double.parseDouble(args[2]));
+                            EconomyResponse depositResponse = econ.depositPlayer(target, Double.parseDouble(args[2]));
                             if (depositResponse.transactionSuccess()) {
                                 player.sendMessage(Main.INDEX + "성공적으로 " + args[1] + "님에게 " + args[2] + "원을 줬습니다.");
-                                Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 " + args[2] + "원을 줬습니다.");
+                                target.sendMessage(Main.INDEX + player.getName() + "님이 " + args[2] + "원을 줬습니다.");
                             } else {
                                 player.sendMessage(Main.INDEX + "§c돈을 주는 것을 실패했습니다.");
                                 player.sendMessage(Main.INDEX + ChatColor.RED + depositResponse.errorMessage);
@@ -65,13 +67,14 @@ public class MoneyHandler {
                 case "뺏기" -> {
                     if (player.isOp()) {
                         if (args.length < 3) player.sendMessage(Main.INDEX + "§c사용법: /돈 뺏기 <플레이어> <돈>");
-                        else if (Bukkit.getPlayer(args[1]) == null)
+                        Player target = Bukkit.getPlayer(args[1]);
+                        if (target == null)
                             player.sendMessage(Main.INDEX + INVALID_PLAYER);
                         else {
                             EconomyResponse withdrawResponse = econ.withdrawPlayer(player, Double.parseDouble(args[2]));
                             if (withdrawResponse.transactionSuccess()) {
                                 player.sendMessage(Main.INDEX + "성공적으로 " + args[1] + "님에게 " + args[2] + "원을 뺏었습니다.");
-                                Bukkit.getPlayer(args[1]).sendMessage(Main.INDEX + player.getName() + "님이 " + args[2] + "원을 뺏었습니다.");
+                                target.sendMessage(Main.INDEX + player.getName() + "님이 " + args[2] + "원을 뺏었습니다.");
                             } else {
                                 player.sendMessage(Main.INDEX + "§c돈을 뺏는 것을 실패했습니다.");
                                 player.sendMessage(Main.INDEX + ChatColor.RED + withdrawResponse.errorMessage);

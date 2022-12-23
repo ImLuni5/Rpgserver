@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class SettingsData {
-    public enum dmOption { ALL, FRIENDS, NEVER }
-    public enum friendOption { ALL, PARTY, NEVER }
-    public enum partyOption { ALL, FRIENDS, NEVER }
-    public enum joinMsgOption { ALL, FRIENDS, NEVER }
+    public enum DmOption { ALL, FRIENDS, NEVER }
+    public enum FriendOption { ALL, PARTY, NEVER }
+    public enum PartyOption { ALL, FRIENDS, NEVER }
+    public enum JoinMsgOption { ALL, FRIENDS, NEVER }
     public static FileConfiguration settingsData;
     private static final File settings = new File("GameData/settingsData.yml");
 
@@ -48,39 +48,39 @@ public class SettingsData {
     public static void nextSettings(@NotNull String Option, UUID uuid) {
         switch (Option) {
             case "dm" -> {
-                if (dmOption.valueOf(getSettings("dm", uuid)) == dmOption.FRIENDS) {
-                    setSettings("dm", uuid, dmOption.NEVER.name());
-                } else if (dmOption.valueOf(getSettings("dm", uuid)) == dmOption.NEVER) {
-                    setSettings("dm", uuid, dmOption.ALL.name());
+                if (DmOption.valueOf(getSettings("dm", uuid)) == DmOption.FRIENDS) {
+                    setSettings("dm", uuid, DmOption.NEVER.name());
+                } else if (DmOption.valueOf(getSettings("dm", uuid)) == DmOption.NEVER) {
+                    setSettings("dm", uuid, DmOption.ALL.name());
                 } else {
-                    setSettings("dm", uuid, dmOption.FRIENDS.name());
+                    setSettings("dm", uuid, DmOption.FRIENDS.name());
                 }
             }
             case "friend" -> {
-                if (friendOption.valueOf(getSettings("friend", uuid)) == friendOption.PARTY) {
-                    setSettings("friend", uuid, friendOption.NEVER.name());
-                } else if (friendOption.valueOf(getSettings("friend", uuid)) == friendOption.NEVER) {
-                    setSettings("friend", uuid, friendOption.ALL.name());
+                if (FriendOption.valueOf(getSettings("friend", uuid)) == FriendOption.PARTY) {
+                    setSettings("friend", uuid, FriendOption.NEVER.name());
+                } else if (FriendOption.valueOf(getSettings("friend", uuid)) == FriendOption.NEVER) {
+                    setSettings("friend", uuid, FriendOption.ALL.name());
                 } else {
-                    setSettings("friend", uuid, friendOption.PARTY.name());
+                    setSettings("friend", uuid, FriendOption.PARTY.name());
                 }
             }
             case "party" -> {
-                if (partyOption.valueOf(getSettings("party", uuid)) == partyOption.FRIENDS) {
-                    setSettings("party", uuid, partyOption.NEVER.name());
-                } else if (partyOption.valueOf(getSettings("party", uuid)) == partyOption.NEVER) {
-                    setSettings("party", uuid, partyOption.ALL.name());
+                if (PartyOption.valueOf(getSettings("party", uuid)) == PartyOption.FRIENDS) {
+                    setSettings("party", uuid, PartyOption.NEVER.name());
+                } else if (PartyOption.valueOf(getSettings("party", uuid)) == PartyOption.NEVER) {
+                    setSettings("party", uuid, PartyOption.ALL.name());
                 } else {
-                    setSettings("party", uuid, partyOption.FRIENDS.name());
+                    setSettings("party", uuid, PartyOption.FRIENDS.name());
                 }
             }
             case "joinMsg" -> {
-                if (joinMsgOption.valueOf(getSettings("joinMsg", uuid)) == joinMsgOption.FRIENDS) {
-                    setSettings("joinMsg", uuid, joinMsgOption.NEVER.name());
-                } else if (joinMsgOption.valueOf(getSettings("joinMsg", uuid)) == joinMsgOption.NEVER) {
-                    setSettings("joinMsg", uuid, joinMsgOption.ALL.name());
+                if (JoinMsgOption.valueOf(getSettings("joinMsg", uuid)) == JoinMsgOption.FRIENDS) {
+                    setSettings("joinMsg", uuid, JoinMsgOption.NEVER.name());
+                } else if (JoinMsgOption.valueOf(getSettings("joinMsg", uuid)) == JoinMsgOption.NEVER) {
+                    setSettings("joinMsg", uuid, JoinMsgOption.ALL.name());
                 } else {
-                    setSettings("joinMsg", uuid, joinMsgOption.FRIENDS.name());
+                    setSettings("joinMsg", uuid, JoinMsgOption.FRIENDS.name());
                 }
             }
         }

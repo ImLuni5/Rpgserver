@@ -32,17 +32,17 @@ public class EventListener implements Listener {
         e.joinMessage(null);
 
         UUID uuid = e.getPlayer().getUniqueId();
-        if (SettingsData.getSettings("dm", uuid) == null) SettingsData.setSettings("dm", uuid, SettingsData.dmOption.ALL.name());
-        if (SettingsData.getSettings("party", uuid) == null) SettingsData.setSettings("party", uuid, SettingsData.partyOption.ALL.name());
-        if (SettingsData.getSettings("friend", uuid) == null) SettingsData.setSettings("friend", uuid, SettingsData.friendOption.ALL.name());
-        if (SettingsData.getSettings("joinMsg", uuid) == null) SettingsData.setSettings("joinMsg", uuid, SettingsData.joinMsgOption.ALL.name());
+        if (SettingsData.getSettings("dm", uuid) == null) SettingsData.setSettings("dm", uuid, SettingsData.DmOption.ALL.name());
+        if (SettingsData.getSettings("party", uuid) == null) SettingsData.setSettings("party", uuid, SettingsData.PartyOption.ALL.name());
+        if (SettingsData.getSettings("friend", uuid) == null) SettingsData.setSettings("friend", uuid, SettingsData.FriendOption.ALL.name());
+        if (SettingsData.getSettings("joinMsg", uuid) == null) SettingsData.setSettings("joinMsg", uuid, SettingsData.JoinMsgOption.ALL.name());
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             String playerSet = SettingsData.getSettings("joinMsg", p.getUniqueId());
-            SettingsData.joinMsgOption playerOption = SettingsData.joinMsgOption.valueOf(playerSet);
-            if (playerOption == SettingsData.joinMsgOption.FRIENDS) {
+            SettingsData.JoinMsgOption playerOption = SettingsData.JoinMsgOption.valueOf(playerSet);
+            if (playerOption == SettingsData.JoinMsgOption.FRIENDS) {
                 if (FriendData.getPlayerFriendList(p.getUniqueId()).contains(e.getPlayer().getUniqueId().toString())) p.sendMessage(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속하셨습니다.");
-            } else if (playerOption == SettingsData.joinMsgOption.ALL) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 접속하셨습니다.");
+            } else if (playerOption == SettingsData.JoinMsgOption.ALL) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 접속하셨습니다.");
         }
         int tmpTaskId = SCHEDULER.scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
             ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -75,8 +75,9 @@ public class EventListener implements Listener {
         taskId.put(e.getPlayer(), tmpTaskId);
         if (!FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()).isEmpty()) {
             for (String uuid1 : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
-                if (SettingsData.joinMsgOption.valueOf(SettingsData.getSettings("joinMsg", UUID.fromString(uuid1))) == SettingsData.joinMsgOption.FRIENDS) {
-                    Bukkit.getPlayer(UUID.fromString(uuid1)).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속했습니다."));
+                Player friend = Bukkit.getPlayer(UUID.fromString(uuid1));
+                if (friend != null && friend.isOnline() && SettingsData.JoinMsgOption.valueOf(SettingsData.getSettings("joinMsg", UUID.fromString(uuid1))) == SettingsData.JoinMsgOption.FRIENDS) {
+                    friend.sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 접속했습니다."));
                 }
             }
         }
@@ -89,14 +90,15 @@ public class EventListener implements Listener {
         e.quitMessage(null);
         for (Player p : Bukkit.getOnlinePlayers()) {
             String playerOption = SettingsData.getSettings("joinMsg", p.getUniqueId());
-            if (SettingsData.joinMsgOption.valueOf(playerOption) == SettingsData.joinMsgOption.FRIENDS) {
+            if (SettingsData.JoinMsgOption.valueOf(playerOption) == SettingsData.JoinMsgOption.FRIENDS) {
                 if (FriendData.getPlayerFriendList(p.getUniqueId()).contains(e.getPlayer().getUniqueId().toString())) p.sendMessage(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다.");
-            } else if (SettingsData.joinMsgOption.valueOf(playerOption) == SettingsData.joinMsgOption.ALL) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 퇴장했습니다.");
+            } else if (SettingsData.JoinMsgOption.valueOf(playerOption) == SettingsData.JoinMsgOption.ALL) p.sendMessage(Main.INDEX + e.getPlayer().getName() + "님이 퇴장했습니다.");
         }
         if (!FriendData.getPlayerFriendList(e.getPlayer().getUniqueId()).isEmpty()) {
             for (String uuid : FriendData.getPlayerFriendList(e.getPlayer().getUniqueId())) {
-                if (SettingsData.joinMsgOption.valueOf(SettingsData.getSettings("joinMsg", UUID.fromString(uuid))) == SettingsData.joinMsgOption.FRIENDS) {
-                    Bukkit.getPlayer(UUID.fromString(uuid)).sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다."));
+                Player friend = Bukkit.getPlayer(UUID.fromString(uuid));
+                if (friend != null && friend.isOnline() && SettingsData.JoinMsgOption.valueOf(SettingsData.getSettings("joinMsg", UUID.fromString(uuid))) == SettingsData.JoinMsgOption.FRIENDS) {
+                    friend.sendActionBar(Component.text(Main.INDEX + "친구 " + e.getPlayer().getName() + "님이 퇴장했습니다."));
                 }
             }
         }

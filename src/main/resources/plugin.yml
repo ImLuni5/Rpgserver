@@ -19,3 +19,6 @@ commands:
   나침반:
     description: 나침반 명령어
     aliases: [ compass ]
+  레시피:
+    description: 레시피 명령어
+    aliases: [ recipe ]

@@ -2,6 +2,7 @@ package main.cmdhandler;
 
 import main.Main;
 import main.datahandler.FriendData;
+import main.recipehandler.Recipe;
 import main.timerhandler.CMDCooldownTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -35,6 +36,7 @@ public class CMDHandler implements TabExecutor {
             case "돈" -> MoneyHandler.onCommand(commandSender, strings);
             case "설정", "settings" -> SettingsHandler.onCommand(commandSender);
             case "compass", "나침반" -> CompassHandler.onCommand(commandSender, strings);
+            case "recipe", "레시피" -> RecipeHandler.onCommand(commandSender, strings);
         }
         return false;
     }
@@ -45,6 +47,9 @@ public class CMDHandler implements TabExecutor {
         Player player = (Player) commandSender;
         if (strings.length == 1) {
             switch (s) {
+                case "레시피", "recipe" -> {
+                    return Arrays.asList("추가", "제거", "보기", "목록");
+                }
                 case "나침반", "compass" -> {
                     return List.of("track");
                 }
@@ -74,6 +79,15 @@ public class CMDHandler implements TabExecutor {
             }
         } else if (strings.length == 2) {
             switch (s) {
+                case "레시피", "recipe" -> {
+                    switch (strings[0]) {
+                        case "추가", "목록" -> {
+                            return List.of();
+                        } case "제거", "보기" -> {
+                            return Recipe.recipeData.getStringList("Recipes.recipeKeys");
+                        }
+                    }
+                }
                 case "나침반", "compass" -> {
                     List<String> list = new ArrayList<>(List.of("clear"));
                     for (Player p : Bukkit.getOnlinePlayers()) list.add(p.getName());
@@ -96,6 +110,8 @@ public class CMDHandler implements TabExecutor {
                     }
                 }
             }
+        } else if (strings.length == 3) {
+            if ((s.equals("레시피") || s.equals("recipe")) && strings[0].equals("추가")) return List.of();
         }
         return null;
     }

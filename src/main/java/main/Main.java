@@ -3,13 +3,16 @@ package main;
 import main.cmdhandler.CMDHandler;
 import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
+import main.eventhandler.CraftHandler;
 import main.eventhandler.EventListener;
 import main.eventhandler.IClickHandler;
+import main.recipehandler.Recipe;
 import main.timerhandler.CMDCooldownTimer;
 import main.timerhandler.FriendRequestTimer;
 import main.timerhandler.InvCooldownTimer;
 import main.timerhandler.PartyInviteTimer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,8 +25,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -54,10 +59,12 @@ public class Main extends JavaPlugin {
         // 데이터 로드
         FriendData.loadData();
         SettingsData.loadData();
+        Recipe.loadData();
 
         // 이벤트 리스너 등록
         Bukkit.getPluginManager().registerEvents(new EventListener(), this);
         Bukkit.getPluginManager().registerEvents(new IClickHandler(), this);
+        Bukkit.getPluginManager().registerEvents(new CraftHandler(), this);
 
         // 타이머 시작
         SCHEDULER.scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);
@@ -95,17 +102,75 @@ public class Main extends JavaPlugin {
         return econ;
     }
 
-    public static @NotNull ItemStack item(Material type, String name, @NotNull List<String> lore, boolean shiny) {
+    public static @NotNull ItemStack item(Material type, String name, @Nullable List<String> lore, int count, boolean shiny) {
         ItemStack itemStack = new ItemStack(type);
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.displayName(Component.text(name));
-        List<Component> loreComponent = new ArrayList<>();
-        for (String s : lore) loreComponent.add(Component.text(s));
-        meta.lore(loreComponent);
-        if (shiny) meta.addEnchant(Enchantment.DURABILITY, 1, false);
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
-        itemStack.setItemMeta(meta);
+        if (!itemStack.getType().equals(Material.AIR)) {
+            ItemMeta meta = itemStack.getItemMeta();
+            if (name != null) meta.displayName(Component.text(name));
+            List<Component> loreComponent = new ArrayList<>();
+            if (lore != null) {
+                for (String s : lore) loreComponent.add(Component.text(s));
+                meta.lore(loreComponent);
+            }
+            if (shiny) meta.addEnchant(Enchantment.DURABILITY, 1, false);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+            itemStack.setItemMeta(meta);
+            itemStack.setAmount(count);
+        }
         return itemStack;
+    }
+
+    /**
+     *
+     * @param s 다음과 같은 양식으로 입력된 문자열: "재료/,/이름/,/설명[설명1//설명2//설명3//...]/,/아이템갯수/,/인챈트[인챈트1이름/인챈트1레벨//인챈트2이름/인챈트2레벨//...]"
+     * @return 일치하게 제작된 아이템
+     */
+    public static @NotNull ItemStack stringToItem(@NotNull String s) {
+        String[] i = s.split("/,/");
+        List<String> lore;
+        if (Arrays.stream(i[2].split("//")).toList().get(0).equals("</>")) lore = null;
+        else lore = Arrays.stream(i[2].split("//")).toList();
+        if (i[1].equals("</>")) i[1] = null;
+        ItemStack itemStack = new ItemStack(Material.valueOf(i[0]));
+        if (!itemStack.getType().equals(Material.AIR)) {
+            ItemMeta meta = itemStack.getItemMeta();
+            if (i[1] != null) meta.displayName(Component.text(i[1]));
+            if (lore != null) {
+                List<Component> loreTo = new ArrayList<>();
+                for (String lores : lore) {
+                    loreTo.add(Component.text(lores));
+                }
+                meta.lore(loreTo);
+            } itemStack.setItemMeta(meta);
+        }
+        return itemStack;
+    }
+
+    /**
+     * 아이템을 전용 문자열으로 바꿔주는 메소드
+     * @param i 문자열으로 바꿀 아이템
+     * @return 바뀐 문자열, 양식: "종류/,/이름/,/설명첫째줄//설명둘째줄//설명셋째줄//../,/수량/,/인챈트[인챈트1이름/인챈트1레벨//인챈트2이름/인챈트2레벨//...](이름, 설명에서 </>는 값이 없음을 의미함)
+     */
+
+    public static @NotNull String itemToString(@NotNull ItemStack i) {
+        String material = i.getType().toString();
+        String name;
+        if (PlainTextComponentSerializer.plainText().serialize(i.displayName()).replace("[", "").replace("]", "").replace(" ", "_").toUpperCase().equals(material)) name = "</>";
+        else name = PlainTextComponentSerializer.plainText().serialize(i.displayName()).replace("[", "").replace("]", "");
+        List<Component> loreComponent = i.lore();
+        StringBuilder lore;
+        if (loreComponent != null && !loreComponent.isEmpty()) {
+            lore = new StringBuilder();
+            for (Component c : loreComponent) {
+                if (lore.length() < 1) lore.append(PlainTextComponentSerializer.plainText().serialize(c));
+                else lore.append("//").append(PlainTextComponentSerializer.plainText().serialize(c));
+            }
+        } else lore = new StringBuilder("</>");
+        boolean shiny;
+        if (i.getItemMeta() != null) shiny = i.getItemMeta().hasEnchants();
+        else shiny = false;
+        int amount = i.getAmount();
+        return material + "/,/" + name + "/,/" + lore + "/,/" + amount + "/,/" + shiny;
     }
 
     //ㅎㅇ 여러분

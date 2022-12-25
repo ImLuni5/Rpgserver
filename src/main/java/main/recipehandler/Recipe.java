@@ -38,12 +38,12 @@ public class Recipe {
     private List<ItemStack> ingredients;
 
     /**
-     * 레시피 인스턴스
+     * 레시피 인스턴스,
+     * 이미 존재하는 레시피의 키를 사용할 경우 해당 레시피의 구조물을 변경함
      * @param key 레시피 키 (시스템에 등록될 이름)
      * @param name 레시피 이름 (구별용 이름)
      * @param result 결과물 (아이템)
      * @param ingredients 재료 아이템들 (반드시 9개여야 함, 없더라도 AIR 사용)
-     * @throws IllegalStateException 레시피 키가 이미 존재하는 키일 경우
      * @throws IllegalArgumentException 재료 아이템이 9개가 아닐 경우
      */
     public Recipe(String key, String name, ItemStack result, List<ItemStack> ingredients) {

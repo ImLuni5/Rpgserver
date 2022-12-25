@@ -19,9 +19,9 @@ public class RecipeHandler {
     public static final int recipeMakeSlot = 49;
     public static final int recipeResultSlot = 25;
     public static final List<Integer> recipeTableSlot = Arrays.asList(12, 13, 14, 21, 22, 23, 30, 31, 32);
-    public static final ItemStack blank = Main.item(Material.LIGHT_BLUE_STAINED_GLASS_PANE, " ", List.of(), 1, false);
+    public static final ItemStack blank = Main.item(Material.LIGHT_BLUE_STAINED_GLASS_PANE, " ", null, 1, false);
     public static final ItemStack make = Main.item(Material.GOLD_INGOT, "§a레시피 제작하기", Arrays.asList("§c- §e재료 칸에는 적어도 1개 이상의 아이템이 있어야 합니다.", "§c- §e결과 아이템은 공기가 아니여야 합니다.", "", "§e▶ 클릭해서 제작하기"), 1, true);
-    private static final String INVAILD_USAGE = Main.INDEX + "/레시피 추가 <키> <이름> - 레시피를 추가합니다.\n" + Main.INDEX + "/레시피 제거 <키> - 레시피를 제거합니다.\n" + Main.INDEX + "/레시피 보기 <키> - 특정 레시피를 직접 봅니다.\n" + Main.INDEX + "/레시피 수정 <키> - 해당 레시피를 수정합니다." + Main.INDEX + "/레시피 목록 - 레시피 목록을 봅니다.\n" + Main.INDEX + "/레시피 리로드 - 레시피 파일을 다시 읽습니다.";
+    private static final String INVAILD_USAGE = Main.INDEX + "/레시피 추가 <키> <이름> - 레시피를 추가합니다.\n" + Main.INDEX + "/레시피 제거 <키> - 레시피를 제거합니다.\n" + Main.INDEX + "/레시피 보기 <키> - 특정 레시피를 직접 봅니다.\n" + Main.INDEX + "/레시피 수정 <키> - 해당 레시피를 수정합니다.\n" + Main.INDEX + "/레시피 목록 - 레시피 목록을 봅니다.\n" + Main.INDEX + "/레시피 리로드 - 레시피 파일을 다시 읽습니다.";
     public static void onCommand(@NotNull CommandSender commandSender, String @NotNull [] args) {
         if (!commandSender.isOp()) {
             commandSender.sendMessage(Main.INDEX + "§c이 명령어를 사용할 권한이 없습니다!");

@@ -10,28 +10,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CraftHandler implements Listener {
     public static final List<Integer> itemTables = Arrays.asList(11, 12, 13, 20, 21, 22, 29, 30, 31);
     public static final int resultTable = 24;
     public static final ItemStack blank = Main.item(Material.GRAY_STAINED_GLASS_PANE, " ", null, 1, false);
-    private static final Inventory craftingUI; static {
-        craftingUI = Bukkit.createInventory(null, 45, Component.text("제작대"));
-        for (int i = 0; i < 45; i++) {
-            craftingUI.setItem(i, blank);
-        } for (int i : itemTables) {
-            craftingUI.setItem(i, new ItemStack(Material.AIR));
-        } craftingUI.setItem(resultTable, new ItemStack(Material.AIR));
-    }
+
+    private static final HashMap<Player, Integer> tableTask = new HashMap<>();
 
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent e) {
@@ -39,17 +31,49 @@ public class CraftHandler implements Listener {
         if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
             e.setCancelled(true);
             Player p = e.getPlayer();
-            p.openInventory(craftingUI);
+            openTable(p);
+            Inventory inventory = p.getOpenInventory().getTopInventory();
+            int i = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
+                for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
+                    Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
+                        if (getOnTable(inventory).equals(recipe.getIngredients())) {
+                            if (inventory.contains(blank)) inventory.setItem(resultTable, recipe.getResult());
+                        } else inventory.setItem(resultTable, new ItemStack(Material.AIR));
+                    }, 1);
+                }
+            }, 0, 3);
+            tableTask.put(p, i);
+        }
+    }
+
+    @EventHandler
+    public void onClose(@NotNull InventoryCloseEvent e) {
+        if (e.getView().title().equals(Component.text("제작대"))) {
+            Bukkit.getScheduler().cancelTask(tableTask.get((Player) e.getPlayer()));
+            List<ItemStack> table = getOnTable(e.getInventory());
+            if (!table.isEmpty()) {
+                for (ItemStack tableItem : table) {
+                    e.getPlayer().getInventory().addItem(tableItem);
+                }
+            }
         }
     }
 
     @EventHandler
     public void onInventoryClick(@NotNull InventoryClickEvent e) {
-        if (e.getView().title().equals(Component.text("제작대"))) {
+        if (e.getWhoClicked().getOpenInventory().title().equals(Component.text("제작대"))) {
             ItemStack item = e.getCurrentItem();
             Inventory inventory = e.getClickedInventory();
             if (e.getSlot() == resultTable) {
-                if (e.getCursor() == null || e.getCursor().getType().equals(Material.AIR)) {
+                boolean noMatches = true;
+                for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
+                    Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
+                    if (getOnTable(inventory).equals(recipe.getIngredients())) noMatches = false;
+                } if (noMatches) {
+                    e.setCancelled(true);
+                    return;
+                } if (e.getCursor() == null || e.getCursor().getType().equals(Material.AIR)) {
                     for (int i : itemTables) {
                         if (inventory != null) {
                             inventory.setItem(i, new ItemStack(Material.AIR));
@@ -62,17 +86,8 @@ public class CraftHandler implements Listener {
             }
             if (item != null && item.isSimilar(blank) || (inventory == null)) {
                 e.setCancelled(true);
-                return;
             } if (item != null && item.getType().equals(Material.AIR) && (e.getSlot() == resultTable)) {
                 e.setCancelled(true);
-                return;
-            } for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
-                Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
-                    if (getOnTable(inventory).equals(recipe.getIngredients())) {
-                        if (inventory.contains(blank)) inventory.setItem(resultTable, recipe.getResult());
-                    } else inventory.setItem(resultTable, new ItemStack(Material.AIR));
-                }, 1);
             }
         }
     }
@@ -84,5 +99,15 @@ public class CraftHandler implements Listener {
             if (toAdd == null) items.add(new ItemStack(Material.AIR));
             else items.add(toAdd);
         } return items;
+    }
+
+    private static void openTable(Player player) {
+        Inventory craftingUI = Bukkit.createInventory(null, 45, Component.text("제작대"));
+        for (int i = 0; i < 45; i++) {
+            craftingUI.setItem(i, blank);
+        } for (int i : itemTables) {
+            craftingUI.setItem(i, new ItemStack(Material.AIR));
+        } craftingUI.setItem(resultTable, new ItemStack(Material.AIR));
+        player.openInventory(craftingUI);
     }
 }

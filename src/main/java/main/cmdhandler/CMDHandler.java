@@ -48,7 +48,7 @@ public class CMDHandler implements TabExecutor {
         if (strings.length == 1) {
             switch (s) {
                 case "레시피", "recipe" -> {
-                    return Arrays.asList("추가", "제거", "보기", "목록");
+                    return Arrays.asList("리로드", "목록", "보기", "수정", "제거", "추가");
                 }
                 case "나침반", "compass" -> {
                     return List.of("track");
@@ -83,7 +83,7 @@ public class CMDHandler implements TabExecutor {
                     switch (strings[0]) {
                         case "추가", "목록" -> {
                             return List.of();
-                        } case "제거", "보기" -> {
+                        } case "제거", "보기", "수정" -> {
                             return Recipe.recipeData.getStringList("Recipes.recipeKeys");
                         }
                     }

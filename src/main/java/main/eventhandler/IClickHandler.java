@@ -29,7 +29,54 @@ public class IClickHandler implements Listener {
     public void onInventoryClick(@NotNull InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         UUID uuid = p.getUniqueId();
-        switch (PlainTextComponentSerializer.plainText().serialize(e.getView().title())) {
+        String title = PlainTextComponentSerializer.plainText().serialize(p.getOpenInventory().title());
+        if (title.contains("레시피 보기")) {
+            e.setCancelled(true);
+            ItemStack i = e.getCurrentItem();
+            if (i != null) {
+                String clicked = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().displayName());
+                if (clicked.contains("닫기")) p.closeInventory();
+                if (clicked.contains("레시피 수정하기")) {
+                    String[] args = new String[]{"수정", PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getItem(19)).lore()).get(0)).replace("§d키: ", "").replace("[", "").replace("]", "")};
+                    RecipeHandler.onCommand(p, args);
+                }
+            }
+        } else if (title.contains("레시피 수정하기")) {
+            ItemStack i = e.getCurrentItem();
+            if (i != null && i.isSimilar(RecipeHandler.blank)) {
+                e.setCancelled(true);
+                return;
+            } else if (i != null && i.getType().equals(Material.PAPER) && i.getItemMeta().hasEnchant(Enchantment.DURABILITY)) {
+                e.setCancelled(true);
+                return;
+            } else if (i != null && PlainTextComponentSerializer.plainText().serialize(i.displayName()).contains("변경 사항 저장하기")) {
+                List<ItemStack> tableItems = new ArrayList<>();
+                for (int l : RecipeHandler.recipeTableSlot) {
+                    ItemStack tableItem = e.getInventory().getItem(l);
+                    if (tableItem != null && !tableItem.getType().equals(Material.AIR))
+                        tableItems.add(e.getInventory().getItem(l));
+                } if (tableItems.isEmpty()) {
+                    p.sendMessage(Main.INDEX + "§c재료 아이템이 부족합니다!");
+                    p.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.MASTER, 100, 0));
+                    return;
+                } ItemStack result = e.getInventory().getItem(RecipeHandler.recipeResultSlot);
+                if (result == null || result.getType().equals(Material.AIR)) {
+                    p.sendMessage(Main.INDEX + "§c결과 아이템이 없습니다!");
+                    p.playSound(Sound.sound(Key.key("minecraft:entity.enderman.teleport"), Sound.Source.MASTER, 100, 0));
+                    return;
+                } String key = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getItem(RecipeHandler.recipeDescSlot)).lore()).get(0)).replace("§d키: ", "").replace("[", "").replace("]", "");
+                String name = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.getInventory().getItem(RecipeHandler.recipeDescSlot)).displayName()).replace("§e레시피: ", "").replace("[", "").replace("]", "");
+                List<ItemStack> ingrediants = new ArrayList<>();
+                for (int l : RecipeHandler.recipeTableSlot) {
+                    if (e.getInventory().getItem(l) != null) ingrediants.add(e.getInventory().getItem(l));
+                    else ingrediants.add(new ItemStack(Material.AIR));
+                }
+                new Recipe(key, name, result, ingrediants);
+                p.closeInventory();
+                p.sendMessage(Main.INDEX + "§a성공적으로 레시피를 수정했습니다.");
+                p.playSound(Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.MASTER, 100, 1));
+            }
+        } switch (title) {
             case "설정 GUI" -> {
                 e.setCancelled(true);
                 if (InvCooldownTimer.getInvClickCooldown().containsKey(p)) return;
@@ -52,14 +99,10 @@ public class IClickHandler implements Listener {
                     SettingsHandler.openSettings(p);
                 }
             }
-            case "레시피 보기" -> e.setCancelled(true);
             case "레시피 만들기" -> {
-                Inventory inventory = e.getClickedInventory();
+                Inventory inventory = p.getOpenInventory().getTopInventory();
                 ItemStack i = e.getCurrentItem();
-                if (inventory == null) {
-                    e.setCancelled(true);
-                    return;
-                } if (i != null && i.isSimilar(RecipeHandler.blank)) {
+                if (i != null && i.isSimilar(RecipeHandler.blank)) {
                     e.setCancelled(true);
                     return;
                 } if (i != null && i.getType().equals(Material.PAPER) && i.getItemMeta().hasEnchant(Enchantment.DURABILITY)) {
@@ -83,8 +126,8 @@ public class IClickHandler implements Listener {
                         return;
                     } p.closeInventory();
                     ItemStack desc = inventory.getItem(RecipeHandler.recipeDescSlot);
-                    String key = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(Objects.requireNonNull(desc).lore()).get(0)).replace("§d키: ", "");
-                    String name = PlainTextComponentSerializer.plainText().serialize(desc.displayName()).replace("§e레시피: ", "");
+                    String key = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(Objects.requireNonNull(desc).lore()).get(0)).replace("§d키: ", "").replace("[", "").replace("]", "");
+                    String name = PlainTextComponentSerializer.plainText().serialize(desc.displayName()).replace("§e레시피: ", "").replace("[", "").replace("]", "");
                     List<ItemStack> ingrediants = new ArrayList<>();
                     for (int l : RecipeHandler.recipeTableSlot) {
                         if (inventory.getItem(l) != null) ingrediants.add(inventory.getItem(l));
@@ -92,6 +135,7 @@ public class IClickHandler implements Listener {
                     }
                     new Recipe(key, name, result, ingrediants);
                     p.sendMessage(Main.INDEX + "§a레시피 제작에 성공했습니다.");
+                    p.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.MASTER, 1000, 1));
                 }
             }
         }

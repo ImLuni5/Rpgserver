@@ -108,7 +108,8 @@ public class RecipeHandler {
                     } gui.setItem(recipeResultSlot, recipe.getResult());
                     gui.setItem(19, Main.item(Material.PAPER, "§e레시피: " + recipe.getName(), List.of("§d키: " + args[1]), 1, true));
                     gui.setItem(50, Main.item(Material.FEATHER, "§e레시피 수정하기", Arrays.asList("§a레시피의 결과 아이템, 재료를 수정합니다.", "", "§b▶ 클릭해서 수정 메뉴 열기"), 1, true));
-                    gui.setItem(48, Main.item(Material.RED_DYE, "§c닫기", null, 1, true));
+                    gui.setItem(48, Main.item(Material.RED_DYE, "§c닫기", null, 1, false));
+                    gui.setItem(53, Main.item(Material.REDSTONE, "§4레시피 삭제하기", Arrays.asList("§c레시피를 삭제합니다.", "§c§l이 작업은 되돌릴 수 없습니다!", "", "§e▶ 클릭해서 삭제하기"), 1, false));
                     p.openInventory(gui);
                 } else commandSender.sendMessage(Main.INDEX + "이 명령어는 플레이어만 사용할 수 있습니다.");
             } case "목록" -> {

@@ -8,7 +8,9 @@ import main.recipehandler.Recipe;
 import main.timerhandler.InvCooldownTimer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -19,10 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class IClickHandler implements Listener {
     @EventHandler
@@ -40,6 +39,15 @@ public class IClickHandler implements Listener {
                     String[] args = new String[]{"수정", PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getItem(19)).lore()).get(0)).replace("§d키: ", "").replace("[", "").replace("]", "")};
                     RecipeHandler.onCommand(p, args);
                 }
+            } if (i != null && PlainTextComponentSerializer.plainText().serialize(i.displayName()).contains("레시피 삭제하기")) {
+                e.setCancelled(true);
+                Inventory inventory = Bukkit.createInventory(null, 45, Component.text("§4레시피 삭제하기"));
+                for (int i2 = 0; i2 < 45; i2++) {
+                    inventory.setItem(i2, Main.item(Material.RED_STAINED_GLASS_PANE, " ", null, 1, false));
+                } inventory.setItem(13, e.getInventory().getItem(19));
+                inventory.setItem(30, Main.item(Material.GREEN_DYE, "§a취소", null, 1, false));
+                inventory.setItem(32, Main.item(Material.RED_DYE, "§4확인", Arrays.asList("§c레시피를 완전히 삭제합니다.", "§c§l다시 되돌릴 수 없습니다!!", "", "§e▶ 클릭해서 삭제하기"), 1, false));
+                p.openInventory(inventory);
             }
         } else if (title.contains("레시피 수정하기")) {
             ItemStack i = e.getCurrentItem();
@@ -50,6 +58,7 @@ public class IClickHandler implements Listener {
                 e.setCancelled(true);
                 return;
             } else if (i != null && PlainTextComponentSerializer.plainText().serialize(i.displayName()).contains("변경 사항 저장하기")) {
+                e.setCancelled(true);
                 List<ItemStack> tableItems = new ArrayList<>();
                 for (int l : RecipeHandler.recipeTableSlot) {
                     ItemStack tableItem = e.getInventory().getItem(l);
@@ -74,9 +83,25 @@ public class IClickHandler implements Listener {
                 new Recipe(key, name, result, ingrediants);
                 p.closeInventory();
                 p.sendMessage(Main.INDEX + "§a성공적으로 레시피를 수정했습니다.");
-                p.playSound(Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.MASTER, 100, 1));
+                p.playSound(Sound.sound(Key.key("minecraft:entity.player.levelup"), Sound.Source.MASTER, 100, 1));
             }
-        } switch (title) {
+        } else if (title.contains("레시피 삭제하기")) {
+            ItemStack i = e.getCurrentItem();
+            e.setCancelled(true);
+            if (i != null && PlainTextComponentSerializer.plainText().serialize(i.displayName()).contains("취소")) p.closeInventory();
+            if (i != null && PlainTextComponentSerializer.plainText().serialize(i.displayName()).contains("확인")) {
+                String key = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(Objects.requireNonNull(e.getInventory().getItem(13)).lore()).get(0)).replace("§d키: ", "").replace("[", "").replace("]", "");
+                Recipe recipe = Recipe.getRecipe(key);
+                if (recipe == null) p.sendMessage(Main.INDEX + "해당 키의 레시피를 찾을 수 없습니다.");
+                else {
+                    recipe.remove();
+                    p.closeInventory();
+                    p.sendMessage(Main.INDEX + "§a레시피를 삭제했습니다.");
+                    p.playSound(Sound.sound(Key.key("minecraft:block.anvil.destroy"), Sound.Source.MASTER, 100, 1));
+                }
+            }
+        }
+        switch (title) {
             case "설정 GUI" -> {
                 e.setCancelled(true);
                 if (InvCooldownTimer.getInvClickCooldown().containsKey(p)) return;

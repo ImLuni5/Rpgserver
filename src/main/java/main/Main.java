@@ -7,10 +7,7 @@ import main.eventhandler.CraftHandler;
 import main.eventhandler.EventListener;
 import main.eventhandler.IClickHandler;
 import main.recipehandler.Recipe;
-import main.timerhandler.CMDCooldownTimer;
-import main.timerhandler.FriendRequestTimer;
-import main.timerhandler.InvCooldownTimer;
-import main.timerhandler.PartyInviteTimer;
+import main.timerhandler.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
@@ -71,6 +68,7 @@ public class Main extends JavaPlugin {
             SCHEDULER.scheduleSyncRepeatingTask(this, new FriendRequestTimer(), 0L, 20L);
             SCHEDULER.scheduleSyncRepeatingTask(this, new InvCooldownTimer(), 0L, 1L);
             SCHEDULER.scheduleSyncRepeatingTask(this, new CMDCooldownTimer(), 0L, 20L);
+            SCHEDULER.scheduleSyncRepeatingTask(this, new TPATimer(), 0L, 20L);
 
             // 명령어 등록
             pdf.getCommands().keySet().forEach(s -> {

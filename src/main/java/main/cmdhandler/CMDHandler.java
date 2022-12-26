@@ -39,6 +39,7 @@ public class CMDHandler implements TabExecutor {
                 case "compass", "나침반" -> CompassHandler.onCommand(commandSender, strings);
                 case "recipe", "레시피" -> RecipeHandler.onCommand(commandSender, strings);
                 case "오류", "error", "exception" -> ExceptionHandler.onCommand(commandSender, strings);
+                case "tpa", "tpaccept", "tpdeny" -> TPAHandler.onCommand(commandSender, s, strings);
             }
             return false;
         } catch (Exception exception) {
@@ -54,6 +55,16 @@ public class CMDHandler implements TabExecutor {
             Player player = (Player) commandSender;
             if (strings.length == 1) {
                 switch (s) {
+                    case "tpa" -> {
+                        List<String> playerList = new ArrayList<>();
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (!p.getName().equals(commandSender.getName()))
+                                playerList.add(p.getName());
+                        } return playerList;
+                    }
+                    case "tpaccept", "tpdeny" -> {
+                        return List.of();
+                    }
                     case "오류", "error", "exception" -> {
                         return Arrays.asList("목록", "생성", "초기화");
                     }
@@ -91,6 +102,9 @@ public class CMDHandler implements TabExecutor {
                 }
             } else if (strings.length == 2) {
                 switch (s) {
+                    case "tpa" -> {
+                        return List.of();
+                    }
                     case "오류", "error", "exception" -> {
                         if (strings[0].equals("생성")) {
                             return List.of();

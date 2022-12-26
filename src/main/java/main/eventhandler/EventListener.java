@@ -146,12 +146,12 @@ public class EventListener implements Listener {
     public void onChat(@NotNull AsyncChatEvent e) {
         try {
             // 파티 채팅 모드인지 확인
-            if (Boolean.TRUE.equals(PartyHandler.getIsPartyChat().getOrDefault(e.getPlayer(), false))) {
+            if (PartyHandler.getIsPartyChat().getOrDefault(e.getPlayer(), false)) {
                 // 파티 채팅
                 e.setCancelled(true);
                 TextComponent component = (TextComponent) e.message();
                 for (Player player : PartyHandler.getParty().get(PartyHandler.getPlayerParty().get(e.getPlayer())))
-                    if (Boolean.TRUE.equals(PartyHandler.getIsPartyOwner().getOrDefault(player, false)))
+                    if (PartyHandler.getIsPartyOwner().getOrDefault(player, false))
                         player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | 파티장 | " + e.getPlayer().getName() + ": " + component.content());
                     else
                         player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | " + e.getPlayer().getName() + ": " + component.content());

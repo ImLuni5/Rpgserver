@@ -37,6 +37,7 @@ public class CMDHandler implements TabExecutor {
             case "설정", "settings" -> SettingsHandler.onCommand(commandSender);
             case "compass", "나침반" -> CompassHandler.onCommand(commandSender, strings);
             case "recipe", "레시피" -> RecipeHandler.onCommand(commandSender, strings);
+            case "오류", "error", "exception" -> ExceptionHandler.onCommand(commandSender, strings);
         }
         return false;
     }
@@ -47,8 +48,14 @@ public class CMDHandler implements TabExecutor {
         Player player = (Player) commandSender;
         if (strings.length == 1) {
             switch (s) {
+                case "오류", "error", "exception" -> {
+                    return Arrays.asList("목록", "생성", "초기화");
+                }
                 case "레시피", "recipe" -> {
-                    return Arrays.asList("리로드", "목록", "보기", "수정", "제거", "추가");
+                    if (commandSender.isOp()) {
+                        return Arrays.asList("리로드", "목록", "보기", "수정", "제거", "추가");
+                    }
+                    else return List.of();
                 }
                 case "나침반", "compass" -> {
                     return List.of("track");
@@ -79,6 +86,11 @@ public class CMDHandler implements TabExecutor {
             }
         } else if (strings.length == 2) {
             switch (s) {
+                case "오류", "error", "exception" -> {
+                    if (strings[0].equals("생성")) {
+                        return List.of();
+                    }
+                }
                 case "레시피", "recipe" -> {
                     switch (strings[0]) {
                         case "추가", "목록" -> {

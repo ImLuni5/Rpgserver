@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,7 +38,7 @@ public class Main extends JavaPlugin {
     public static final BukkitScheduler SCHEDULER = Bukkit.getScheduler();
     private static final Logger log = Bukkit.getLogger();
     private static Economy econ = null;
-
+    public static final List<String> EXCEPTIONS = new ArrayList<>();
 
     final PluginDescriptionFile pdf = this.getDescription();
 
@@ -191,6 +192,42 @@ public class Main extends JavaPlugin {
             }
         } else enchants = new StringBuilder("</>");
         return material + "/,/" + name + "/,/" + lore + "/,/" + amount + "/,/" + enchants + "/,/" + custom;
+    }
+
+    /**
+     * 오류(예외)를 출력하는 메소드
+     * @param e 발생한 예외
+     */
+    public static void printException(Exception e) {
+        try {
+            log.severe(Main.INDEX + "서버에 오류가 발생했습니다! 아래를 확인해주세요.");
+            e.printStackTrace();
+            String className = Thread.currentThread().getStackTrace()[2].getClassName();
+            String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+            String errorName = e.getClass().getName();
+            String errorMessage = e.getMessage();
+            opMessage(String.format("%s§6%s.%s§c에서 오류가 발생했습니다.", INDEX, className, methodName));
+            if (e.getMessage() != null) {
+                EXCEPTIONS.add(String.format("§4%s: §c%s\n%s§c> §6%s.%s §4(§c%tT§4)", errorName, errorMessage, INDEX, className, methodName, new Date()));
+                opMessage(String.format("%s§4%s: §c%s", INDEX, errorName, errorMessage));
+            } else {
+                EXCEPTIONS.add(String.format("§4%s: §c알 수 없는 오류 §7(오류 메시지 없음)\n%s§c> §6%s.%s §4(§c%tT§4)", errorName, INDEX, className, methodName, new Date()));
+                opMessage(String.format("%s§4%s: §c알 수 없는 오류", INDEX, errorName));
+            }
+        } catch (Exception e2) {
+            opMessage(Main.INDEX + "§4오류 출력 도중 또 다른 오류가 발생했습니다. 콘솔을 확인해주세요.");
+            e2.printStackTrace();
+        }
+    }
+
+    /**
+     * 서버 내의 관리자(OP)에게
+     * @param message 보낼 메시지
+     */
+    private static void opMessage(String message) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.isOp()) p.sendMessage(message);
+        }
     }
 
     //ㅎㅇ 여러분

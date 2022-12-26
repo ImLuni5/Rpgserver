@@ -15,10 +15,13 @@ commands:
     aliases: [ 귓, 귓말, w, msg, tell ]
   설정:
     description: 설정 명령어
-    aliases: [settings]
+    aliases: [ settings ]
   나침반:
     description: 나침반 명령어
     aliases: [ compass ]
   레시피:
     description: 레시피 명령어
     aliases: [ recipe ]
+  오류:
+    description: 오류(예외) 관리 명령어
+    aliases: [ error, exception ]

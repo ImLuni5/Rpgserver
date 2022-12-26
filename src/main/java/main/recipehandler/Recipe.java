@@ -141,7 +141,7 @@ public class Recipe {
                 recipeData.save(recipe);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.printException(e);
         }
     }
 
@@ -152,7 +152,7 @@ public class Recipe {
         try {
             recipeData.save(recipe);
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.printException(e);
         }
     }
 

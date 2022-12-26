@@ -1,5 +1,6 @@
 package main.timerhandler;
 
+import main.Main;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -11,13 +12,17 @@ public class CMDCooldownTimer implements Runnable {
 
     @Override
     public void run() {
-        if (!cmdClickStack.isEmpty()) {
-            for (Map.Entry<Player, Integer> entry : cmdClickStack.entrySet()) {
-                cmdClickStack.put(entry.getKey(), entry.getValue() - 1);
-                if (entry.getValue() <= 0) {
-                    cmdClickStack.remove(entry.getKey());
+        try {
+            if (!cmdClickStack.isEmpty()) {
+                for (Map.Entry<Player, Integer> entry : cmdClickStack.entrySet()) {
+                    cmdClickStack.put(entry.getKey(), entry.getValue() - 1);
+                    if (entry.getValue() <= 0) {
+                        cmdClickStack.remove(entry.getKey());
+                    }
                 }
             }
+        } catch (Exception e) {
+            Main.printException(e);
         }
     }
     public static Map<Player, Integer> getCMDClickStack() {

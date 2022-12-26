@@ -27,87 +27,112 @@ public class CraftHandler implements Listener {
 
     @EventHandler
     public void onInteract(@NotNull PlayerInteractEvent e) {
-        Block block = e.getClickedBlock();
-        if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
-            e.setCancelled(true);
-            Player p = e.getPlayer();
-            openTable(p);
-            Inventory inventory = p.getOpenInventory().getTopInventory();
-            int i = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
-                for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
-                    Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
+        try {
+            Block block = e.getClickedBlock();
+            if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
+                e.setCancelled(true);
+                Player p = e.getPlayer();
+                openTable(p);
+                Inventory inventory = p.getOpenInventory().getTopInventory();
+                int i = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
+                    for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
+                        Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
                         if (getOnTable(inventory).equals(recipe.getIngredients())) {
                             if (inventory.contains(blank)) inventory.setItem(resultTable, recipe.getResult());
                         } else inventory.setItem(resultTable, new ItemStack(Material.AIR));
-                    }, 1);
-                }
-            }, 0, 3);
-            tableTask.put(p, i);
+                    }
+                }, 0, 3);
+                tableTask.put(p, i);
+            }
+        } catch (Exception exception) {
+            Main.printException(exception);
         }
     }
 
     @EventHandler
     public void onClose(@NotNull InventoryCloseEvent e) {
-        if (e.getView().title().equals(Component.text("제작대"))) {
-            Bukkit.getScheduler().cancelTask(tableTask.get((Player) e.getPlayer()));
-            List<ItemStack> table = getOnTable(e.getInventory());
-            if (!table.isEmpty()) {
-                for (ItemStack tableItem : table) {
-                    e.getPlayer().getInventory().addItem(tableItem);
+        try {
+            if (e.getView().title().equals(Component.text("제작대"))) {
+                Bukkit.getScheduler().cancelTask(tableTask.get((Player) e.getPlayer()));
+                List<ItemStack> table = getOnTable(e.getInventory());
+                if (!table.isEmpty()) {
+                    for (ItemStack tableItem : table) {
+                        e.getPlayer().getInventory().addItem(tableItem);
+                    }
                 }
             }
+        } catch (Exception exception) {
+            Main.printException(exception);
         }
     }
 
     @EventHandler
     public void onInventoryClick(@NotNull InventoryClickEvent e) {
-        if (e.getWhoClicked().getOpenInventory().title().equals(Component.text("제작대"))) {
-            ItemStack item = e.getCurrentItem();
-            Inventory inventory = e.getClickedInventory();
-            if (e.getSlot() == resultTable) {
-                boolean noMatches = true;
-                for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
-                    Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
-                    if (getOnTable(inventory).equals(recipe.getIngredients())) noMatches = false;
-                } if (noMatches) {
-                    e.setCancelled(true);
-                    return;
-                } if (e.getCursor() == null || e.getCursor().getType().equals(Material.AIR)) {
-                    for (int i : itemTables) {
-                        if (inventory != null) {
-                            inventory.setItem(i, new ItemStack(Material.AIR));
-                        }
+        try {
+            if (e.getWhoClicked().getOpenInventory().title().equals(Component.text("제작대"))) {
+                ItemStack item = e.getCurrentItem();
+                Inventory inventory = e.getClickedInventory();
+                if (e.getSlot() == resultTable) {
+                    boolean noMatches = true;
+                    for (String key : Recipe.recipeData.getStringList("Recipes.recipeKeys")) {
+                        Recipe recipe = Objects.requireNonNull(Recipe.getRecipe(key));
+                        if (getOnTable(inventory).equals(recipe.getIngredients())) noMatches = false;
                     }
-                } else {
+                    if (noMatches) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                    if (e.getCursor() == null || e.getCursor().getType().equals(Material.AIR)) {
+                        for (int i : itemTables) {
+                            if (inventory != null) {
+                                inventory.setItem(i, new ItemStack(Material.AIR));
+                            }
+                        }
+                    } else {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                if (item != null && item.isSimilar(blank) || (inventory == null)) {
                     e.setCancelled(true);
-                    return;
+                }
+                if (item != null && item.getType().equals(Material.AIR) && (e.getSlot() == resultTable)) {
+                    e.setCancelled(true);
                 }
             }
-            if (item != null && item.isSimilar(blank) || (inventory == null)) {
-                e.setCancelled(true);
-            } if (item != null && item.getType().equals(Material.AIR) && (e.getSlot() == resultTable)) {
-                e.setCancelled(true);
-            }
+        } catch (Exception exception) {
+            Main.printException(exception);
         }
     }
 
     private static @NotNull List<ItemStack> getOnTable(Inventory inventory) {
-        List<ItemStack> items = new ArrayList<>();
-        for (int i : itemTables) {
-            ItemStack toAdd = inventory.getItem(i);
-            if (toAdd == null) items.add(new ItemStack(Material.AIR));
-            else items.add(toAdd);
-        } return items;
+        try {
+            List<ItemStack> items = new ArrayList<>();
+            for (int i : itemTables) {
+                ItemStack toAdd = inventory.getItem(i);
+                if (toAdd == null) items.add(new ItemStack(Material.AIR));
+                else items.add(toAdd);
+            }
+            return items;
+        } catch (Exception exception) {
+            Main.printException(exception);
+            return null;
+        }
     }
 
     private static void openTable(Player player) {
-        Inventory craftingUI = Bukkit.createInventory(null, 45, Component.text("제작대"));
-        for (int i = 0; i < 45; i++) {
-            craftingUI.setItem(i, blank);
-        } for (int i : itemTables) {
-            craftingUI.setItem(i, new ItemStack(Material.AIR));
-        } craftingUI.setItem(resultTable, new ItemStack(Material.AIR));
-        player.openInventory(craftingUI);
+        try {
+            Inventory craftingUI = Bukkit.createInventory(null, 45, Component.text("제작대"));
+            for (int i = 0; i < 45; i++) {
+                craftingUI.setItem(i, blank);
+            }
+            for (int i : itemTables) {
+                craftingUI.setItem(i, new ItemStack(Material.AIR));
+            }
+            craftingUI.setItem(resultTable, new ItemStack(Material.AIR));
+            player.openInventory(craftingUI);
+        } catch (Exception exception) {
+            Main.printException(exception);
+        }
     }
 }

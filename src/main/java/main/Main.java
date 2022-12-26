@@ -44,57 +44,70 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        try {
 
-        // 플러그인 활성화 메시지 전송
-        Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§a플러그인이 활성화되었습니다.");
+            // 플러그인 활성화 메시지 전송
+            Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§a플러그인이 활성화되었습니다.");
 
-        // 이코노미 불러오기
-        if (!setupEconomy()) {
-            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+            // 이코노미 불러오기
+            if (!setupEconomy()) {
+                log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+
+            // 데이터 로드
+            FriendData.loadData();
+            SettingsData.loadData();
+            Recipe.loadData();
+
+            // 이벤트 리스너 등록
+            Bukkit.getPluginManager().registerEvents(new EventListener(), this);
+            Bukkit.getPluginManager().registerEvents(new IClickHandler(), this);
+            Bukkit.getPluginManager().registerEvents(new CraftHandler(), this);
+
+            // 타이머 시작
+            SCHEDULER.scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);
+            SCHEDULER.scheduleSyncRepeatingTask(this, new FriendRequestTimer(), 0L, 20L);
+            SCHEDULER.scheduleSyncRepeatingTask(this, new InvCooldownTimer(), 0L, 1L);
+            SCHEDULER.scheduleSyncRepeatingTask(this, new CMDCooldownTimer(), 0L, 20L);
+
+            // 명령어 등록
+            pdf.getCommands().keySet().forEach(s -> {
+                Objects.requireNonNull(getCommand(s)).setExecutor(new CMDHandler());
+                Objects.requireNonNull(getCommand(s)).setTabCompleter(new CMDHandler());
+            });
+        } catch (Exception e) {
+            printException(e);
         }
-
-        // 데이터 로드
-        FriendData.loadData();
-        SettingsData.loadData();
-        Recipe.loadData();
-
-        // 이벤트 리스너 등록
-        Bukkit.getPluginManager().registerEvents(new EventListener(), this);
-        Bukkit.getPluginManager().registerEvents(new IClickHandler(), this);
-        Bukkit.getPluginManager().registerEvents(new CraftHandler(), this);
-
-        // 타이머 시작
-        SCHEDULER.scheduleSyncRepeatingTask(this, new PartyInviteTimer(), 0L, 20L);
-        SCHEDULER.scheduleSyncRepeatingTask(this, new FriendRequestTimer(), 0L, 20L);
-        SCHEDULER.scheduleSyncRepeatingTask(this, new InvCooldownTimer(), 0L, 1L);
-        SCHEDULER.scheduleSyncRepeatingTask(this, new CMDCooldownTimer(), 0L, 20L);
-
-        // 명령어 등록
-        pdf.getCommands().keySet().forEach(s -> {
-            Objects.requireNonNull(getCommand(s)).setExecutor(new CMDHandler());
-            Objects.requireNonNull(getCommand(s)).setTabCompleter(new CMDHandler());
-        });
     }
 
     @Override
     public void onDisable() {
-        log.info("ㅂ2");
+        try {
+            log.info("ㅂ2");
+        } catch (Exception e) {
+            printException(e);
+        }
     }
 
     private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            System.out.println("발트가 없노");
+        try {
+            if (getServer().getPluginManager().getPlugin("Vault") == null) {
+                System.out.println("발트가 없노");
+                return false;
+            }
+            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp == null) {
+                System.out.println("이코노미가 없노");
+                return false;
+            }
+            econ = rsp.getProvider();
+            return true;
+        } catch (Exception e) {
+            printException(e);
             return false;
         }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            System.out.println("이코노미가 없노");
-            return false;
-        }
-        econ = rsp.getProvider();
-        return true;
     }
 
     public static Economy getEconomy() {
@@ -102,22 +115,27 @@ public class Main extends JavaPlugin {
     }
 
     public static @NotNull ItemStack item(Material type, String name, @Nullable List<String> lore, int count, boolean shiny) {
-        ItemStack itemStack = new ItemStack(type);
-        if (!itemStack.getType().equals(Material.AIR)) {
-            ItemMeta meta = itemStack.getItemMeta();
-            if (name != null) meta.displayName(Component.text(name));
-            List<Component> loreComponent = new ArrayList<>();
-            if (lore != null) {
-                for (String s : lore) loreComponent.add(Component.text(s));
-                meta.lore(loreComponent);
+        try {
+            ItemStack itemStack = new ItemStack(type);
+            if (!itemStack.getType().equals(Material.AIR)) {
+                ItemMeta meta = itemStack.getItemMeta();
+                if (name != null) meta.displayName(Component.text(name));
+                List<Component> loreComponent = new ArrayList<>();
+                if (lore != null) {
+                    for (String s : lore) loreComponent.add(Component.text(s));
+                    meta.lore(loreComponent);
+                }
+                if (shiny) meta.addEnchant(Enchantment.DURABILITY, 1, false);
+                meta.setUnbreakable(true);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+                itemStack.setItemMeta(meta);
+                itemStack.setAmount(count);
             }
-            if (shiny) meta.addEnchant(Enchantment.DURABILITY, 1, false);
-            meta.setUnbreakable(true);
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
-            itemStack.setItemMeta(meta);
-            itemStack.setAmount(count);
+            return itemStack;
+        } catch (Exception e) {
+            printException(e);
+            return null;
         }
-        return itemStack;
     }
 
     /**
@@ -126,35 +144,42 @@ public class Main extends JavaPlugin {
      * @return 일치하게 제작된 아이템
      */
     public static @NotNull ItemStack stringToItem(@NotNull String s) {
-        String[] i = s.split("/,/");
-        List<String> lore;
-        if (Arrays.stream(i[2].split("//")).toList().get(0).equals("</>")) lore = null;
-        else lore = Arrays.stream(i[2].split("//")).toList();
-        if (i[1].equals("</>")) i[1] = null;
-        ItemStack itemStack = new ItemStack(Material.valueOf(i[0]));
-        itemStack.setAmount(Integer.parseInt(i[3]));
-        if (!itemStack.getType().equals(Material.AIR)) {
-            ItemMeta meta = itemStack.getItemMeta();
-            if (i[1] != null) meta.displayName(Component.text(i[1]));
-            if (lore != null) {
-                List<Component> loreTo = new ArrayList<>();
-                for (String lores : lore) {
-                    loreTo.add(Component.text(lores));
+        try {
+            String[] i = s.split("/,/");
+            List<String> lore;
+            if (Arrays.stream(i[2].split("//")).toList().get(0).equals("</>")) lore = null;
+            else lore = Arrays.stream(i[2].split("//")).toList();
+            if (i[1].equals("</>")) i[1] = null;
+            ItemStack itemStack = new ItemStack(Material.valueOf(i[0]));
+            itemStack.setAmount(Integer.parseInt(i[3]));
+            if (!itemStack.getType().equals(Material.AIR)) {
+                ItemMeta meta = itemStack.getItemMeta();
+                if (i[1] != null) meta.displayName(Component.text(i[1]));
+                if (lore != null) {
+                    List<Component> loreTo = new ArrayList<>();
+                    for (String lores : lore) {
+                        loreTo.add(Component.text(lores));
+                    }
+                    meta.lore(loreTo);
                 }
-                meta.lore(loreTo);
-            } itemStack.setItemMeta(meta);
-            if (!i[4].equals("</>")) {
-                String[] ench = i[4].split("//");
-                for (String enchant : ench) {
-                    String[] e = enchant.split("/");
-                    meta.addEnchant(Objects.requireNonNull(Enchantment.getByKey(new NamespacedKey(Main.getPlugin(Main.class), e[0]))), Integer.parseInt(e[1]), true);
+                itemStack.setItemMeta(meta);
+                if (!i[4].equals("</>")) {
+                    String[] ench = i[4].split("//");
+                    for (String enchant : ench) {
+                        String[] e = enchant.split("/");
+                        meta.addEnchant(Objects.requireNonNull(Enchantment.getByKey(new NamespacedKey(Main.getPlugin(Main.class), e[0]))), Integer.parseInt(e[1]), true);
+                    }
                 }
-            } if (Boolean.parseBoolean(i[5])) {
-                meta.setUnbreakable(true);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+                if (Boolean.parseBoolean(i[5])) {
+                    meta.setUnbreakable(true);
+                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+                }
             }
+            return itemStack;
+        } catch (Exception e) {
+            printException(e);
+            return null;
         }
-        return itemStack;
     }
 
     /**
@@ -164,34 +189,41 @@ public class Main extends JavaPlugin {
      */
 
     public static @NotNull String itemToString(@NotNull ItemStack i) {
-        String material = i.getType().toString();
-        String name;
-        if (PlainTextComponentSerializer.plainText().serialize(i.displayName()).replace("[", "").replace("]", "").replace(" ", "_").toUpperCase().equals(material)) name = "</>";
-        else name = PlainTextComponentSerializer.plainText().serialize(i.displayName()).replace("[", "").replace("]", "");
-        List<Component> loreComponent = i.lore();
-        StringBuilder lore;
-        if (loreComponent != null && !loreComponent.isEmpty()) {
-            lore = new StringBuilder();
-            for (Component c : loreComponent) {
-                if (lore.length() < 1) lore.append(PlainTextComponentSerializer.plainText().serialize(c));
-                else lore.append("//").append(PlainTextComponentSerializer.plainText().serialize(c));
-            }
-        } else lore = new StringBuilder("</>");
-        boolean custom;
-        if (i.getItemMeta() != null) {
-            custom = i.getItemFlags().containsAll(Arrays.asList(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE)) && i.getItemMeta().isUnbreakable();
-        } else custom = false;
-        int amount = i.getAmount();
-        Map<Enchantment, Integer> enchantments = i.getEnchantments();
-        StringBuilder enchants;
-        if (!enchantments.isEmpty()) {
-            enchants = new StringBuilder();
-            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                if (enchants.length() < 1) enchants.append(entry.getKey()).append("/").append(entry.getValue());
-                else enchants.append("/").append(entry.getKey()).append("/").append(entry.getValue());
-            }
-        } else enchants = new StringBuilder("</>");
-        return material + "/,/" + name + "/,/" + lore + "/,/" + amount + "/,/" + enchants + "/,/" + custom;
+        try {
+            String material = i.getType().toString();
+            String name;
+            if (PlainTextComponentSerializer.plainText().serialize(i.displayName()).replace("[", "").replace("]", "").replace(" ", "_").toUpperCase().equals(material))
+                name = "</>";
+            else
+                name = PlainTextComponentSerializer.plainText().serialize(i.displayName()).replace("[", "").replace("]", "");
+            List<Component> loreComponent = i.lore();
+            StringBuilder lore;
+            if (loreComponent != null && !loreComponent.isEmpty()) {
+                lore = new StringBuilder();
+                for (Component c : loreComponent) {
+                    if (lore.length() < 1) lore.append(PlainTextComponentSerializer.plainText().serialize(c));
+                    else lore.append("//").append(PlainTextComponentSerializer.plainText().serialize(c));
+                }
+            } else lore = new StringBuilder("</>");
+            boolean custom;
+            if (i.getItemMeta() != null) {
+                custom = i.getItemFlags().containsAll(Arrays.asList(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE)) && i.getItemMeta().isUnbreakable();
+            } else custom = false;
+            int amount = i.getAmount();
+            Map<Enchantment, Integer> enchantments = i.getEnchantments();
+            StringBuilder enchants;
+            if (!enchantments.isEmpty()) {
+                enchants = new StringBuilder();
+                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                    if (enchants.length() < 1) enchants.append(entry.getKey()).append("/").append(entry.getValue());
+                    else enchants.append("/").append(entry.getKey()).append("/").append(entry.getValue());
+                }
+            } else enchants = new StringBuilder("</>");
+            return material + "/,/" + name + "/,/" + lore + "/,/" + amount + "/,/" + enchants + "/,/" + custom;
+        } catch (Exception e) {
+            printException(e);
+            return null;
+        }
     }
 
     /**
@@ -205,15 +237,15 @@ public class Main extends JavaPlugin {
             String className = Thread.currentThread().getStackTrace()[2].getClassName();
             String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
             String errorName = e.getClass().getName();
-            String errorMessage = e.getMessage();
-            opMessage(String.format("%s§6%s.%s§c에서 오류가 발생했습니다.", INDEX, className, methodName));
-            if (e.getMessage() != null) {
-                EXCEPTIONS.add(String.format("§4%s: §c%s\n%s§c> §6%s.%s §4(§c%tT§4)", errorName, errorMessage, INDEX, className, methodName, new Date()));
-                opMessage(String.format("%s§4%s: §c%s", INDEX, errorName, errorMessage));
+            String errorMessage;
+            if (e.getMessage() == null) {
+                errorMessage = "§c알 수 없는 오류 §7(오류 메시지 없음)";
             } else {
-                EXCEPTIONS.add(String.format("§4%s: §c알 수 없는 오류 §7(오류 메시지 없음)\n%s§c> §6%s.%s §4(§c%tT§4)", errorName, INDEX, className, methodName, new Date()));
-                opMessage(String.format("%s§4%s: §c알 수 없는 오류", INDEX, errorName));
+                errorMessage = e.getMessage();
             }
+            opMessage(String.format("%s§6%s.%s§c에서 오류가 발생했습니다.", INDEX, className, methodName));
+            EXCEPTIONS.add(String.format("§4%s: §c%s\n%s§c> §6%s.%s\n%s§4§c> 발생한 시각: §4%tT", errorName, errorMessage, INDEX, className, methodName, INDEX, new Date()));
+            opMessage(String.format("%s§4%s: §c%s", INDEX, errorName, errorMessage));
         } catch (Exception e2) {
             opMessage(Main.INDEX + "§4오류 출력 도중 또 다른 오류가 발생했습니다. 콘솔을 확인해주세요.");
             e2.printStackTrace();
@@ -221,7 +253,7 @@ public class Main extends JavaPlugin {
     }
 
     /**
-     * 서버 내의 관리자(OP)에게
+     * 서버 내의 관리자(OP)에게 메시지를 보냄
      * @param message 보낼 메시지
      */
     private static void opMessage(String message) {

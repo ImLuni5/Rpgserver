@@ -1,11 +1,11 @@
 package main.datahandler;
 
+import main.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,16 +20,16 @@ public class FriendData {
             if (!friend.exists()) {
                 friendData.save(friend);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Main.printException(e);
         }
     }
 
     public static void saveData() {
         try {
             friendData.save(friend);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Main.printException(e);
         }
     }
 

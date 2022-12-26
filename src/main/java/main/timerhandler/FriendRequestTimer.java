@@ -12,17 +12,21 @@ public class FriendRequestTimer implements Runnable {
 
     @Override
     public void run() {
-        if (!playerInviteTime.isEmpty()) {
-            for (Map.Entry<Player, Integer> entry : playerInviteTime.entrySet()) {
-                // 파티 초대 시간 1초씩 감소
-                playerInviteTime.put(entry.getKey(), entry.getValue() - 1);
-                // 파티 초대 만료
-                if (entry.getValue() <= 0) {
-                    entry.getKey().sendMessage(Main.INDEX + "친구 추가 요청이 만료되었습니다.");
-                    playerInviteTime.remove(entry.getKey());
-                    playerInviteOwner.remove(entry.getKey());
+        try {
+            if (!playerInviteTime.isEmpty()) {
+                for (Map.Entry<Player, Integer> entry : playerInviteTime.entrySet()) {
+                    // 파티 초대 시간 1초씩 감소
+                    playerInviteTime.put(entry.getKey(), entry.getValue() - 1);
+                    // 파티 초대 만료
+                    if (entry.getValue() <= 0) {
+                        entry.getKey().sendMessage(Main.INDEX + "친구 추가 요청이 만료되었습니다.");
+                        playerInviteTime.remove(entry.getKey());
+                        playerInviteOwner.remove(entry.getKey());
+                    }
                 }
             }
+        } catch (Exception e) {
+            Main.printException(e);
         }
     }
 

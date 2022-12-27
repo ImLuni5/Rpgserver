@@ -132,7 +132,7 @@ public class Main extends JavaPlugin {
             return itemStack;
         } catch (Exception e) {
             printException(e);
-            return null;
+            return new ItemStack(Material.AIR);
         }
     }
 
@@ -176,7 +176,7 @@ public class Main extends JavaPlugin {
             return itemStack;
         } catch (Exception e) {
             printException(e);
-            return null;
+            return new ItemStack(Material.AIR);
         }
     }
 
@@ -220,7 +220,7 @@ public class Main extends JavaPlugin {
             return material + "/,/" + name + "/,/" + lore + "/,/" + amount + "/,/" + enchants + "/,/" + custom;
         } catch (Exception e) {
             printException(e);
-            return null;
+            return "";
         }
     }
 
@@ -257,6 +257,25 @@ public class Main extends JavaPlugin {
     private static void opMessage(String message) {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.isOp()) p.sendMessage(message);
+        }
+    }
+
+    /**
+     * 아주 평범한 1초에 1씩 value가 줄어드는 타이머 메소드
+     * @param map 맵
+     */
+    public static void commonMinusTimer(Map<Player, Integer> map) {
+        try {
+            if (!map.isEmpty()) {
+                for (Map.Entry<Player, Integer> entry : map.entrySet()) {
+                    map.put(entry.getKey(), entry.getValue() - 1);
+                    if (entry.getValue() <= 0) {
+                        map.remove(entry.getKey());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Main.printException(e);
         }
     }
 

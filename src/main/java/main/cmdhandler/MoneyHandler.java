@@ -24,7 +24,10 @@ public class MoneyHandler {
             } else {
                 switch (args[0]) {
                     case "보내기" -> {
-                        if (args.length < 3) player.sendMessage(Main.INDEX + "§c사용법: /돈 보내기 <플레이어> <돈>");
+                        if (args.length < 3) {
+                            player.sendMessage(Main.INDEX + "§c사용법: /돈 보내기 <플레이어> <돈>");
+                            return;
+                        }
                         Player target = Bukkit.getPlayer(args[1]);
                         if (target == null) player.sendMessage(Main.INDEX + INVALID_PLAYER);
                         else {
@@ -49,7 +52,10 @@ public class MoneyHandler {
                     }
                     case "주기" -> {
                         if (player.isOp()) {
-                            if (args.length < 3) player.sendMessage(Main.INDEX + "§c사용법: /돈 주기 <플레이어> <돈>");
+                            if (args.length < 3) {
+                                player.sendMessage(Main.INDEX + "§c사용법: /돈 주기 <플레이어> <돈>");
+                                return;
+                            }
                             Player target = Bukkit.getPlayer(args[1]);
                             if (target == null) player.sendMessage(Main.INDEX + INVALID_PLAYER);
                             else {
@@ -67,7 +73,10 @@ public class MoneyHandler {
                     }
                     case "뺏기" -> {
                         if (player.isOp()) {
-                            if (args.length < 3) player.sendMessage(Main.INDEX + "§c사용법: /돈 뺏기 <플레이어> <돈>");
+                            if (args.length < 3) {
+                                player.sendMessage(Main.INDEX + "§c사용법: /돈 뺏기 <플레이어> <돈>");
+                                return;
+                            }
                             Player target = Bukkit.getPlayer(args[1]);
                             if (target == null)
                                 player.sendMessage(Main.INDEX + INVALID_PLAYER);

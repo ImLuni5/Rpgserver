@@ -21,6 +21,7 @@ public class AdminHandler {
             }
             if (args.length == 0) {
                 sender.sendMessage(INVAILD_USE);
+                return;
             }
             if (sender instanceof Player p) {
                 switch (args[0]) {

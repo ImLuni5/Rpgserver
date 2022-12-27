@@ -64,6 +64,13 @@ public class AdminHandler {
         return p.isOp() && !adminReveal.get(p);
     }
 
+    public static boolean isHiddenAdminTrying(@NotNull Player p) {
+        if (isHiddenAdmin(p)) {
+            p.sendMessage(Main.INDEX + "§c현재 모습을 드러내지 않았기 때문에 이 명령어는 사용할 수 없습니다. §b/관리자 공개§c를 통해 유저들에게 모습을 드러낸 후 다시 시도하세요.");
+            return true;
+        } return false;
+    }
+
     public static HashMap<Player, Boolean> getAdminChat() {
         return adminChat;
     }

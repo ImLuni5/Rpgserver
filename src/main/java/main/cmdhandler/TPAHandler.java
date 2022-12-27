@@ -14,6 +14,7 @@ public class TPAHandler {
     public static void onCommand(CommandSender sender, String command, String @NotNull [] args) {
         try {
             if (sender instanceof Player p) {
+                if (AdminHandler.isHiddenAdminTrying(p)) return;
                 switch (command) {
                     case "tpa" -> {
                         if (args.length == 0) {

@@ -30,7 +30,7 @@ public class PartyHandler {
             if (args.length == 0) {
                 commandSender.sendMessage(noArguments);
                 return;
-            }
+            } if (AdminHandler.isHiddenAdminTrying((Player) commandSender)) return;
             switch (args[0]) {
                 case "생성" -> {
                     //파티 이름 안적었을때

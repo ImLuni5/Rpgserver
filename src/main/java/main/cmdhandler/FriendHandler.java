@@ -26,7 +26,7 @@ public class FriendHandler {
             if (args.length == 0) {
                 player.sendMessage(noArguments);
                 return;
-            }
+            } if (AdminHandler.isHiddenAdminTrying(player)) return;
             switch (args[0]) {
                 case "추가" -> {
                     if (args.length == 1) player.sendMessage(Main.INDEX + "§c사용법: /친구 추가 <플레이어>");

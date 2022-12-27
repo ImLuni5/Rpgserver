@@ -18,7 +18,7 @@ public class MoneyHandler {
         try {
 
             Player player = (Player) commandSender;
-
+            if (AdminHandler.isHiddenAdminTrying(player)) return;
             if (args.length == 0) {
                 player.sendMessage(Main.INDEX + "돈: " + econ.format(econ.getBalance(player)));
             } else {

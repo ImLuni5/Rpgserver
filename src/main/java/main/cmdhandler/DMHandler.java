@@ -60,9 +60,14 @@ public class DMHandler {
             }
             Player dm = Bukkit.getPlayer(args[0]);
             // 플레이어가 오프라인이거나 존재하지 않을때
-            if (!Bukkit.getOnlinePlayers().contains(dm) || dm == null || AdminHandler.isHiddenAdmin(dm)) {
+            if (!Bukkit.getOnlinePlayers().contains(dm) || dm == null) {
                 p.sendMessage(Main.INDEX + "§c해당 플레이어는 온라인이 아닙니다.");
                 return;
+            } else if (AdminHandler.isHiddenAdmin(dm)) {
+                if (!p.isOp()) {
+                    p.sendMessage(Main.INDEX + "§c해당 플레이어는 온라인이 아닙니다.");
+                    return;
+                }
             }
             String dmSet = SettingsData.getSettings("dm", dm.getUniqueId());
             DmOption dmOption = DmOption.valueOf(dmSet);
@@ -83,6 +88,10 @@ public class DMHandler {
                 // 귓속말 받는 사람 또는 보내는 사람이 서로를 차단했을때
             } else if (FriendData.getPlayerIgnoreList(dm.getUniqueId()).contains(p.getUniqueId().toString()) || FriendData.getPlayerIgnoreList(p.getUniqueId()).contains(dm.getUniqueId().toString())) {
                 p.sendMessage(Main.INDEX + "§c해당 플레이어에게 귓속말을 보낼 수 없습니다.");
+                return;
+                // 비공개 관리자가 일반 유저한테 보내려 할때
+            } else if (AdminHandler.isHiddenAdmin(p) && !dm.isOp()) {
+                p.sendMessage(Main.INDEX + "§c현재 모습을 드러내지 않았기 때문에 일반 유저에겐 귓속말을 보낼 수 없습니다. §b/관리자 공개§c를 통해 유저들에게 모습을 드러낸 후 다시 시도하세요.");
                 return;
             }
             // 정상적으로 명령어를 쳤을때

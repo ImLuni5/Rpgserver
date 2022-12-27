@@ -1,5 +1,6 @@
 package main;
 
+import main.cmdhandler.AdminHandler;
 import main.cmdhandler.CMDHandler;
 import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
@@ -9,9 +10,11 @@ import main.eventhandler.IClickHandler;
 import main.recipehandler.Recipe;
 import main.timerhandler.*;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -32,6 +35,7 @@ import java.util.logging.Logger;
 public class Main extends JavaPlugin {
 
     public static final String INDEX = "§6[§e§lLemon§6]§f ";
+    public static final Component ADMIN_MSG_SYMBOL = Component.text(" §7[§c§n\uD83D\uDDE1§7]").hoverEvent(HoverEvent.showText(Component.text("§a관리자 전용 메시지로, 일반 유저에겐 보이지 않습니다.")));
     public static final BukkitScheduler SCHEDULER = Bukkit.getScheduler();
     private static final Logger log = Bukkit.getLogger();
     private static Economy econ = null;
@@ -75,6 +79,22 @@ public class Main extends JavaPlugin {
                 Objects.requireNonNull(getCommand(s)).setExecutor(new CMDHandler());
                 Objects.requireNonNull(getCommand(s)).setTabCompleter(new CMDHandler());
             });
+
+            // (리로드 시) 기존에 접속해있던 플레이어 처리
+            if (!Bukkit.getOnlinePlayers().isEmpty()) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    EventListener.setScoreboard(p);
+                    if (p.isOp()) {
+                        AdminHandler.getAdminChat().put(p, true);
+                        AdminHandler.getAdminReveal().put(p, false);
+                        p.setGameMode(GameMode.SPECTATOR);
+                        for (Player player : getCommonPlayers()) {
+                            player.hidePlayer(this, p);
+                            if (p.getGameMode() != GameMode.SPECTATOR) Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.sendMessage(Main.INDEX + p.getName() + "님이 퇴장했습니다."), Math.round(Math.random() * 255));
+                        }
+                    }
+                } opMessage(Main.INDEX + "§7서버 리로드로 인해 모든 관리자가 숨김 처리되었습니다.");
+            }
         } catch (Exception e) {
             printException(e);
         }
@@ -254,10 +274,23 @@ public class Main extends JavaPlugin {
      * 서버 내의 관리자(OP)에게 메시지를 보냄
      * @param message 보낼 메시지
      */
-    private static void opMessage(String message) {
+    public static void opMessage(String message) {
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) p.sendMessage(message);
+            if (p.isOp()) p.sendMessage(Component.text(message).append(ADMIN_MSG_SYMBOL));
         }
+    }
+
+    /**
+     * 관리자가 아닌 플레이어 또는 모습을 드러낸 관리자의 리스트를 얻음 (비어있을 수 있음)
+     * @return OP가 없는 모든 플레이어와 모습을 드러낸 관리자의 리스트
+     */
+    public static @NotNull List<Player> getCommonPlayers() {
+        List<Player> l = new ArrayList<>();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (!p.isOp()) l.add(p);
+            else if (AdminHandler.getAdminReveal().get(p)) l.add(p);
+        }
+        return l;
     }
 
     /**

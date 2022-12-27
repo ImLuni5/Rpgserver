@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import static main.Main.SCHEDULER;
 
@@ -42,8 +41,8 @@ public class CompassHandler {
                     SCHEDULER.cancelTask(coordTaskId.get(p));
                     coordTaskId.remove(p);
                     glowTarget.remove(p);
-                } else if (Bukkit.getPlayer(args[1]) != null) {
-                    Player target = Objects.requireNonNull(Bukkit.getPlayer(args[1]));
+                } Player target = Bukkit.getPlayer(args[1]);
+                if (target != null && !AdminHandler.isHiddenAdmin(target)) {
                     p.sendMessage(String.format("%s§e%s§a를 추적합니다.", Main.INDEX, target.getName()));
                     ServerGamePacketListenerImpl connection = ((CraftPlayer) p).getHandle().connection;
                     SynchedEntityData data = ((CraftPlayer) target).getHandle().getEntityData();
@@ -56,7 +55,7 @@ public class CompassHandler {
                         p.setCompassTarget(l);
                     }, 0, 1L);
                     coordTaskId.put(p, i);
-                } else p.sendMessage(Main.INDEX + "올바른 플레이어의 이름을 입력해주세요.");
+                } else p.sendMessage(Main.INDEX + "해당 플레이어를 찾을 수 없습니다.");
             }
         } catch (Exception e) {
             Main.printException(e);

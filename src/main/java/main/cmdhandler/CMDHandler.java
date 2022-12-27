@@ -40,6 +40,7 @@ public class CMDHandler implements TabExecutor {
                 case "recipe", "레시피" -> RecipeHandler.onCommand(commandSender, strings);
                 case "오류", "error", "exception" -> ExceptionHandler.onCommand(commandSender, strings);
                 case "tpa", "tpaccept", "tpdeny" -> TPAHandler.onCommand(commandSender, s, strings);
+                case "관리자", "admin" -> AdminHandler.onCommand(commandSender, strings);
             }
             return false;
         } catch (Exception exception) {
@@ -53,25 +54,33 @@ public class CMDHandler implements TabExecutor {
         try {
 
             Player player = (Player) commandSender;
-            if (strings.length == 1) {
+            if (!commandSender.isOp()) {
                 switch (s) {
+                    // 관리자가 아닌데 관리자 명령어 tabComplete 시도할 경우 무조건 비어있는 리스트 반환
+                    case "레시피", "오류", "관리자" -> {
+                        return List.of();
+                    }
+                }
+            } if (strings.length == 1) {
+                switch (s) {
+                    case "관리자", "admin" -> {
+                        return Arrays.asList("공개", "채팅");
+                    }
                     case "tpa" -> {
                         List<String> playerList = new ArrayList<>();
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            if (!p.getName().equals(commandSender.getName()))
-                                playerList.add(p.getName());
-                        } return playerList;
+                        for (Player p : Main.getCommonPlayers()) {
+                            playerList.add(p.getName());
+                        } playerList.remove(player.getName());
+                        return playerList;
                     }
-                    case "tpaccept", "tpdeny" -> {
+                    case "tpaccept", "tpdeny", "설정" -> {
                         return List.of();
                     }
                     case "오류", "error", "exception" -> {
                         return Arrays.asList("목록", "생성", "초기화");
                     }
                     case "레시피", "recipe" -> {
-                        if (commandSender.isOp()) {
-                            return Arrays.asList("리로드", "목록", "보기", "수정", "제거", "추가");
-                        } else return List.of();
+                        return Arrays.asList("리로드", "목록", "보기", "수정", "제거", "추가");
                     }
                     case "나침반", "compass" -> {
                         return List.of("track");
@@ -86,7 +95,7 @@ public class CMDHandler implements TabExecutor {
                         if (strings[0].isEmpty()) {
                             List<String> dmList = new ArrayList<>();
                             dmList.add("설정");
-                            for (Player p : Bukkit.getOnlinePlayers()) {
+                            for (Player p : Main.getCommonPlayers()) {
                                 dmList.add(p.getName());
                             }
                             return dmList;
@@ -105,7 +114,7 @@ public class CMDHandler implements TabExecutor {
                         return List.of();
                     }
                     case "오류", "error", "exception" -> {
-                        if (strings[0].equals("생성")) {
+                        if (commandSender.isOp() && strings[0].equals("생성")) {
                             return List.of();
                         }
                     }
@@ -121,7 +130,8 @@ public class CMDHandler implements TabExecutor {
                     }
                     case "나침반", "compass" -> {
                         List<String> list = new ArrayList<>(List.of("clear"));
-                        for (Player p : Bukkit.getOnlinePlayers()) list.add(p.getName());
+                        for (Player p : Main.getCommonPlayers())
+                            list.add(p.getName());
                         return list;
                     }
                     case "친구" -> {

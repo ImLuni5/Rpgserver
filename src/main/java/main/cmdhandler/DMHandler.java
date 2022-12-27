@@ -60,7 +60,7 @@ public class DMHandler {
             }
             Player dm = Bukkit.getPlayer(args[0]);
             // 플레이어가 오프라인이거나 존재하지 않을때
-            if (!Bukkit.getOnlinePlayers().contains(dm) || dm == null) {
+            if (!Bukkit.getOnlinePlayers().contains(dm) || dm == null || AdminHandler.isHiddenAdmin(dm)) {
                 p.sendMessage(Main.INDEX + "§c해당 플레이어는 온라인이 아닙니다.");
                 return;
             }

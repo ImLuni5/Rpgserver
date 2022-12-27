@@ -35,8 +35,10 @@ public class FriendHandler {
                     else {
                         String friendSet = SettingsData.getSettings("friend", friend.getUniqueId());
                         FriendOption friendOption = FriendOption.valueOf(friendSet);
-                        if (!Bukkit.getOnlinePlayers().contains(friend))
+                        if (!Bukkit.getOnlinePlayers().contains(friend) || AdminHandler.isHiddenAdmin(friend))
                             player.sendMessage(Main.INDEX + "§c그 플레이어는 온라인이 아닙니다.");
+                        else if (friend.equals(player))
+                            player.sendMessage(Main.INDEX + "§c자기 자신에게 친구 요청을 보낼 수 없습니다.");
                         else if (FriendData.getPlayerFriendList(player.getUniqueId()).contains(friend.getUniqueId().toString()))
                             player.sendMessage(Main.INDEX + "§c이미 해당 플레이어와 친구입니다.");
                         else if (FriendRequestTimer.getPlayerInviteTime().containsKey(friend))
@@ -68,8 +70,8 @@ public class FriendHandler {
                 }
                 case "거절" -> {
                     if (FriendRequestTimer.getPlayerInviteTime().containsKey(player)) {
-                        player.sendMessage(Main.INDEX + FriendRequestTimer.getPlayerInviteOwner().get(player) + "님의 친구 추가 요청을 거절했습니다.");
-                        FriendRequestTimer.getPlayerInviteOwner().get(player).sendMessage(Main.INDEX + player + "님이 친구 추가 요청을 거절했습니다.");
+                        player.sendMessage(Main.INDEX + FriendRequestTimer.getPlayerInviteOwner().get(player).getName() + "님의 친구 추가 요청을 거절했습니다.");
+                        FriendRequestTimer.getPlayerInviteOwner().get(player).sendMessage(Main.INDEX + player.getName() + "님이 친구 추가 요청을 거절했습니다.");
                         FriendRequestTimer.getPlayerInviteTime().remove(player);
                         FriendRequestTimer.getPlayerInviteOwner().remove(player);
                     } else player.sendMessage(Main.INDEX + "§c받은 친구 요청이 존재하지 않습니다.");

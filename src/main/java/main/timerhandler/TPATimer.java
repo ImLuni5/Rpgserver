@@ -32,8 +32,8 @@ public class TPATimer implements Runnable {
                     if (entry.getValue() <= 0) {
                         Player reciver = entry.getKey();
                         Player requster = tpaRequest.get(entry.getKey());
-                        reciver.sendMessage(Main.INDEX + "§e" + requster.getName() + "§c님에게 온 tpa 요청이 만료되었습니다.");
-                        requster.sendMessage(Main.INDEX + "§e" + reciver.getName() + "§c님에게 보낸 tpa 요청이 만료되었습니다.");
+                        reciver.sendMessage(Main.INDEX + "§e" + requster.getName() + "§c님에게 온 텔레포트 요청이 만료되었습니다.");
+                        requster.sendMessage(Main.INDEX + "§e" + reciver.getName() + "§c님에게 보낸 텔레포트 요청이 만료되었습니다.");
                         tpaTimer.remove(entry.getKey());
                         tpaRequest.remove(entry.getKey());
                     }

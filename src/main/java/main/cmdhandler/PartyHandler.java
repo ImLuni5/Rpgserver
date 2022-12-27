@@ -85,9 +85,11 @@ public class PartyHandler {
                     // 파티 리더인지 확인
                     if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
                         //플레이어가 온라인인지 확인
-                        if (!Bukkit.getOnlinePlayers().contains(inviter))
+                        if (!Bukkit.getOnlinePlayers().contains(inviter) || AdminHandler.isHiddenAdmin(inviter))
                             commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 온라인이 아닙니다.");
                             // 플레이어가 초대를 받았는지 확인
+                        else if (inviter.equals(commandSender))
+                            commandSender.sendMessage(Main.INDEX + "§c자기 자신에게 파티 초대를 보낼 수 없습니다.");
                         else if (PartyInviteTimer.getPlayerInviteTime().containsKey(inviter))
                             commandSender.sendMessage(Main.INDEX + "§c해당 플레이어는 이미 누군가가 초대를 보냈습니다.");
                             // 플레이어가 파티에 소속되었는지 확인
@@ -134,7 +136,7 @@ public class PartyHandler {
                 }
                 case "파티장위임" -> {
                     //파티 리더인지 확인
-                    if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
+                    if (isPartyOwner.getOrDefault((Player) commandSender, false)) {
                         //닉네임을 적었는지 확인
                         if (args.length == 1) commandSender.sendMessage(Main.INDEX + "§c사용법: /파티 파티장위임 <닉네임>");
                         else {
@@ -165,7 +167,7 @@ public class PartyHandler {
                 }
                 case "강퇴" -> {
                     //파티 리더인지 확인
-                    if (Boolean.TRUE.equals(isPartyOwner.getOrDefault((Player) commandSender, false))) {
+                    if (isPartyOwner.getOrDefault((Player) commandSender, false)) {
                         //닉네임을 적었는지 확인
                         if (args.length == 1) commandSender.sendMessage(Main.INDEX + "§c사용법: /파티 강퇴 <닉네임>");
                         else {

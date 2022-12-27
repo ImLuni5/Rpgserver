@@ -31,3 +31,6 @@ commands:
     description: 플레이어 텔레포트 수락 명령어
   tpdeny:
     description: 플레이어 텔레포트 거절 명령어
+  관리자:
+    description: 관리자 전용 명령어
+    aliases: [ admin ]

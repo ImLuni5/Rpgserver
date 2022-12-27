@@ -116,7 +116,7 @@ public class CraftHandler implements Listener {
             return items;
         } catch (Exception exception) {
             Main.printException(exception);
-            return null;
+            return new ArrayList<>();
         }
     }
 

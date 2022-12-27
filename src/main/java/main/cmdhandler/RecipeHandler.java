@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class RecipeHandler {
     public static final int recipeDescSlot = 19;
@@ -34,16 +35,9 @@ public class RecipeHandler {
             switch (args[0]) {
                 case "수정" -> {
                     if (commandSender instanceof Player p) {
-                        if (args.length < 2) {
-                            p.sendMessage(INVAILD_USAGE);
-                            return;
-                        }
+                        if (wrong(commandSender, args)) return;
                         Recipe recipe = Recipe.getRecipe(args[1]);
-                        if (recipe == null) {
-                            p.sendMessage(Main.INDEX + "§c해당 키의 레시피가 존재하지 않습니다.");
-                            return;
-                        }
-                        Inventory gui = Bukkit.createInventory(null, 54, Component.text("레시피 수정하기: " + recipe.getName()));
+                        Inventory gui = Bukkit.createInventory(null, 54, Component.text("레시피 수정하기: " + Objects.requireNonNull(recipe).getName()));
                         for (int i = 0; i < 54; i++) {
                             gui.setItem(i, blank);
                         }
@@ -88,30 +82,16 @@ public class RecipeHandler {
                     } else commandSender.sendMessage(Main.INDEX + "이 명령어는 플레이어만 사용할 수 있습니다.");
                 }
                 case "제거" -> {
-                    if (args.length < 2) {
-                        commandSender.sendMessage(INVAILD_USAGE);
-                        return;
-                    }
+                    if (wrong(commandSender, args)) return;
                     Recipe recipe = Recipe.getRecipe(args[1]);
-                    if (recipe == null) {
-                        commandSender.sendMessage(Main.INDEX + "§c해당 키의 레시피가 존재하지 않습니다.");
-                        return;
-                    }
-                    commandSender.sendMessage(Main.INDEX + "§e레시피 §6\"" + recipe.getName() + "§6\"§e을(를) 제거했습니다.");
+                    commandSender.sendMessage(Main.INDEX + "§e레시피 §6\"" + Objects.requireNonNull(recipe).getName() + "§6\"§e을(를) 제거했습니다.");
                     recipe.remove();
                 }
                 case "보기" -> {
                     if (commandSender instanceof Player p) {
-                        if (args.length < 2) {
-                            p.sendMessage(INVAILD_USAGE);
-                            return;
-                        }
+                        if (wrong(p, args)) return;
                         Recipe recipe = Recipe.getRecipe(args[1]);
-                        if (recipe == null) {
-                            p.sendMessage(Main.INDEX + "§c해당 키의 레시피가 존재하지 않습니다.");
-                            return;
-                        }
-                        Inventory gui = Bukkit.createInventory(null, 54, Component.text("레시피 보기: " + recipe.getName() + " §1(" + args[1] + ")"));
+                        Inventory gui = Bukkit.createInventory(null, 54, Component.text("레시피 보기: " + Objects.requireNonNull(recipe).getName() + " §1(" + args[1] + ")"));
                         for (int i = 0; i < 54; i++) {
                             gui.setItem(i, Main.item(Material.BLACK_STAINED_GLASS_PANE, " ", null, 1, false));
                         }
@@ -140,5 +120,15 @@ public class RecipeHandler {
         } catch (Exception e) {
             Main.printException(e);
         }
+    }
+    private static boolean wrong(CommandSender commandSender, String @NotNull [] args) {
+        if (args.length < 2) {
+            commandSender.sendMessage(INVAILD_USAGE);
+            return true;
+        }
+        if (Recipe.getRecipe(args[1]) == null) {
+            commandSender.sendMessage(Main.INDEX + "§c해당 키의 레시피가 존재하지 않습니다.");
+            return true;
+        } return false;
     }
 }

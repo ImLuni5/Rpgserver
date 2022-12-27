@@ -13,14 +13,7 @@ public class CMDCooldownTimer implements Runnable {
     @Override
     public void run() {
         try {
-            if (!cmdClickStack.isEmpty()) {
-                for (Map.Entry<Player, Integer> entry : cmdClickStack.entrySet()) {
-                    cmdClickStack.put(entry.getKey(), entry.getValue() - 1);
-                    if (entry.getValue() <= 0) {
-                        cmdClickStack.remove(entry.getKey());
-                    }
-                }
-            }
+            Main.commonMinusTimer(cmdClickStack);
         } catch (Exception e) {
             Main.printException(e);
         }

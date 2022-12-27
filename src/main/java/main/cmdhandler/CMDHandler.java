@@ -91,7 +91,6 @@ public class CMDHandler implements TabExecutor {
                             }
                             return dmList;
                         }
-                        return null;
                     }
                     case "돈" -> {
                         if (player.isOp()) {

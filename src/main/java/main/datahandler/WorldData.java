@@ -4,11 +4,12 @@ import main.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
 public class WorldData {
-    public enum WorldType { LOBBY, SURVIVING, RPG, MINIGAME }
+    public enum WorldType { LOBBY, SURVIVING, RPG, MINIGAME, NOT_SET }
     public static FileConfiguration worldData;
     private static final File world = new File("GameData/worldData.yml");
 
@@ -31,12 +32,14 @@ public class WorldData {
         }
     }
 
-    public static @NotNull WorldType getworldType(String worldName) {
-        return WorldType.valueOf(worldData.getString("worlds." + worldName + ".type"));
+    public static @Nullable WorldType getworldType(String worldName) {
+        String data = worldData.getString("world." + worldName + ".type");
+        if (data == null) return null;
+        return WorldType.valueOf(data);
     }
 
     public static void setworldType(String worldName, @NotNull WorldType worldType) {
-        worldData.set("worlds." + worldName + ".type", worldType.name());
+        worldData.set("world." + worldName + ".type", worldType.name());
         saveData();
     }
 }

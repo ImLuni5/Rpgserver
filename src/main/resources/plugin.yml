@@ -34,3 +34,6 @@ commands:
   관리자:
     description: 관리자 전용 명령어
     aliases: [ admin ]
+  월드:
+    description: 월드 설정 명령어
+    aliases: [ world ]

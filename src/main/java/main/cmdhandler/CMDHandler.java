@@ -5,6 +5,7 @@ import main.datahandler.FriendData;
 import main.recipehandler.Recipe;
 import main.timerhandler.CMDCooldownTimer;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -41,6 +42,7 @@ public class CMDHandler implements TabExecutor {
                 case "오류", "error", "exception" -> ExceptionHandler.onCommand(commandSender, strings);
                 case "tpa", "tpaccept", "tpdeny" -> TPAHandler.onCommand(commandSender, s, strings);
                 case "관리자", "admin" -> AdminHandler.onCommand(commandSender, strings);
+                case "월드", "world" -> WorldHandler.onCommand(commandSender, strings);
             }
             return false;
         } catch (Exception exception) {
@@ -57,12 +59,15 @@ public class CMDHandler implements TabExecutor {
             if (!commandSender.isOp()) {
                 switch (s) {
                     // 관리자가 아닌데 관리자 명령어 tabComplete 시도할 경우 무조건 비어있는 리스트 반환
-                    case "레시피", "오류", "관리자" -> {
+                    case "레시피", "오류", "관리자", "월드", "recipe", "error", "exception", "admin", "world" -> {
                         return List.of();
                     }
                 }
             } if (strings.length == 1) {
                 switch (s) {
+                    case "월드", "world" -> {
+                        return Arrays.asList("설정", "목록");
+                    }
                     case "관리자", "admin" -> {
                         return Arrays.asList("공개", "채팅");
                     }
@@ -110,6 +115,12 @@ public class CMDHandler implements TabExecutor {
                 }
             } else if (strings.length == 2) {
                 switch (s) {
+                    case "월드", "world" -> {
+                        List<String> toReturn = new ArrayList<>();
+                        for (World w : Bukkit.getWorlds()) {
+                            toReturn.add(w.getName());
+                        } return toReturn;
+                    }
                     case "tpa" -> {
                         return List.of();
                     }
@@ -152,7 +163,14 @@ public class CMDHandler implements TabExecutor {
                     }
                 }
             } else if (strings.length == 3) {
-                if ((s.equals("레시피") || s.equals("recipe")) && strings[0].equals("추가")) return List.of();
+                switch (s) {
+                    case "레시피", "recipe" -> {
+                        if (strings[0].equals("추가")) return List.of();
+                    }
+                    case "월드", "world" -> {
+                        return Arrays.asList("로비", "RPG", "야생", "미니게임");
+                    }
+                }
             }
             return null;
         } catch (Exception e) {

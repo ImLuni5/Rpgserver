@@ -14,10 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -36,7 +33,7 @@ import java.util.logging.Logger;
 public class Main extends JavaPlugin {
 
     public static final String INDEX = "§6[§e§lLemon§6]§f ";
-    public static final Component ADMIN_MSG_SYMBOL = Component.text(" §7[§c§n\uD83D\uDDE1§7]").hoverEvent(HoverEvent.showText(Component.text("§a관리자 전용 메시지로, 일반 유저에겐 보이지 않습니다.")));
+    public static final Component ADMIN_MSG_SYMBOL = Component.text(" ").append(Component.text("§7[§c§n\uD83D\uDDE1§7]").hoverEvent(HoverEvent.showText(Component.text("§a관리자 전용 메시지로, 일반 유저에겐 보이지 않습니다."))));
     public static final BukkitScheduler SCHEDULER = Bukkit.getScheduler();
     private static final Logger log = Bukkit.getLogger();
     private static Economy econ = null;
@@ -96,6 +93,11 @@ public class Main extends JavaPlugin {
                         }
                     }
                 } opMessage(Main.INDEX + "§7서버 리로드로 인해 모든 관리자가 숨김 처리되었습니다.");
+            }
+
+            for (World w : Bukkit.getWorlds()) {
+                if (WorldData.getworldType(w.getName()) == null)
+                    WorldData.setworldType(w.getName(), WorldData.WorldType.NOT_SET);
             }
         } catch (Exception e) {
             printException(e);

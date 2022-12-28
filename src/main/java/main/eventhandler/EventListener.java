@@ -10,8 +10,10 @@ import main.datahandler.SettingsData.DmOption;
 import main.datahandler.SettingsData.FriendOption;
 import main.datahandler.SettingsData.JoinMsgOption;
 import main.datahandler.SettingsData.PartyOption;
+import main.datahandler.WorldData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -24,8 +26,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static main.Main.SCHEDULER;
@@ -40,6 +44,10 @@ public class EventListener implements Listener {
             e.joinMessage(null);
             boolean isOp = false;
             if (e.getPlayer().isOp()) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
+                    e.getPlayer().sendMessage(Main.INDEX + "§e§l숨겨진 관리자 모드§c: §f관리자가 아닌 유저에게서 §e완벽하게 숨겨지지만§f, §c관리자 채팅§f만을 사용 가능하고 대부분의 §9소셜 기능§f을 사용할 수 §c없습니다§f.\n" + Main.INDEX + "§f해제하려면 §b/관리자 공개§f를 입력하세요. 다른 유저들에게 방금 들어온 걸로 표시되며 제한이 모두 해제됩니다.");
+                    e.getPlayer().showTitle(Title.title(Component.text("§e숨겨진 관리자 모드"), Component.text("§c유저들이 볼 수 없고, 기능이 제한됩니다. 해제하려면 §b/관리자 공개§c를 입력하세요."), Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(6), Duration.ofSeconds(1))));
+                }, 5);
                 isOp = true;
                 AdminHandler.getAdminChat().put(e.getPlayer(), true);
                 AdminHandler.getAdminReveal().put(e.getPlayer(), false);
@@ -48,6 +56,9 @@ public class EventListener implements Listener {
                     if (p.isOp()) p.sendMessage(Component.text("§7[!] 관리자 §c" + e.getPlayer().getName() + "§7님이 접속했습니다.").append(Main.ADMIN_MSG_SYMBOL));
                     else p.hidePlayer(Main.getPlugin(Main.class), e.getPlayer());
                 }
+            } String wName = e.getPlayer().getWorld().getName();
+            if (Objects.equals(WorldData.getworldType(wName), WorldData.WorldType.NOT_SET)) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> e.getPlayer().sendMessage("§c§l주의: §f현재 접속한 월드는 종류가 설정되지 않았습니다. 이는 오류를 발생시킬 수 있으며 §b/월드 설정 " + wName + " <타입>§f으로 변경하세요."), 10);
             }
 
             UUID uuid = e.getPlayer().getUniqueId();

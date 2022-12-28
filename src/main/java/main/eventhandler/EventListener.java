@@ -18,6 +18,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.*;
@@ -169,6 +170,13 @@ public class EventListener implements Listener {
             }
         } catch (Exception exception) {
             Main.printException(exception);
+        }
+    }
+
+    @EventHandler
+    public void onAchivement(@NotNull PlayerAdvancementDoneEvent e) {
+        if (e.getPlayer().isOp()) {
+            e.message(null);
         }
     }
 

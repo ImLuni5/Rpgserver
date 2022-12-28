@@ -4,6 +4,7 @@ import main.cmdhandler.AdminHandler;
 import main.cmdhandler.CMDHandler;
 import main.datahandler.FriendData;
 import main.datahandler.SettingsData;
+import main.datahandler.WorldData;
 import main.eventhandler.CraftHandler;
 import main.eventhandler.EventListener;
 import main.eventhandler.IClickHandler;
@@ -60,6 +61,7 @@ public class Main extends JavaPlugin {
             // 데이터 로드
             FriendData.loadData();
             SettingsData.loadData();
+            WorldData.loadData();
             Recipe.loadData();
 
             // 이벤트 리스너 등록

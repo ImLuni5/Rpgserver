@@ -1,6 +1,7 @@
 package main.eventhandler;
 
 import main.Main;
+import main.cmdhandler.ColorHandler;
 import main.cmdhandler.RecipeHandler;
 import main.cmdhandler.SettingsHandler;
 import main.datahandler.SettingsData;
@@ -11,6 +12,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -109,6 +111,25 @@ public class IClickHandler implements Listener {
                 }
             }
             switch (title) {
+                case "색깔 선택" -> {
+                    e.setCancelled(true);
+                    if (e.getSlot() == ColorHandler.whiteColorSlot) {
+                        if (ColorHandler.getPlayerColor().get(p).equals(ChatColor.WHITE)) p.sendMessage(Main.INDEX + "§c이미 해당 색상을 사용하고 있습니다.");
+                        else {
+                            ColorHandler.getPlayerColor().put(p, ChatColor.WHITE);
+                            p.displayName(Component.text(ChatColor.WHITE + p.getName()));
+                            p.playerListName(Component.text(ChatColor.WHITE + p.getName()));
+                        } p.closeInventory();
+                    } else if (e.getSlot() == ColorHandler.darkRedColorSlot) {
+                        if (!p.isOp()) p.sendMessage(Main.INDEX + "§c아직 이 색을 해금하지 않았습니다.");
+                        else if (ColorHandler.getPlayerColor().get(p).equals(ChatColor.DARK_RED)) p.sendMessage(Main.INDEX + "§c이미 해당 색상을 사용하고 있습니다.");
+                        else {
+                            ColorHandler.getPlayerColor().put(p, ChatColor.DARK_BLUE);
+                            p.displayName(Component.text(ChatColor.DARK_RED + p.getName()));
+                            p.playerListName(Component.text(ChatColor.DARK_RED + p.getName()));
+                        } p.closeInventory();
+                    }
+                }
                 case "설정 GUI" -> {
                     e.setCancelled(true);
                     if (InvCooldownTimer.getInvClickCooldown().containsKey(p)) return;

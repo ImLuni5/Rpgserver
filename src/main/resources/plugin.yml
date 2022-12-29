@@ -37,3 +37,6 @@ commands:
   월드:
     description: 월드 설정 명령어
     aliases: [ world ]
+  색깔:
+    description: 색깔 설정 명령어
+    aliases: [ color ]

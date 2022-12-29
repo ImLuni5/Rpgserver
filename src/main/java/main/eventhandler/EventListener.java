@@ -61,6 +61,20 @@ public class EventListener implements Listener {
                 }
             }
 
+            /* todo: 이거 완성 /*
+            /* if (ColorHandler.getPlayerColor().get(e.getPlayer()) == null) {
+                e.getPlayer().sendMessage(Main.INDEX + "§a색깔 §f§l흰색§a을 흭득했습니다.");
+                e.getPlayer().playSound(Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.MASTER, 100, 1));
+                if (isOp) {
+                    e.getPlayer().sendMessage(Main.INDEX + "§a색깔 §4§l짙은 빨간색§a을 흭득했습니다.");
+                    ColorHandler.getPlayerColor().put(e.getPlayer(), ChatColor.DARK_RED);
+                    e.getPlayer().displayName(Component.text(ChatColor.DARK_RED + e.getPlayer().getName()));
+                    e.getPlayer().playerListName(Component.text(ChatColor.DARK_RED + e.getPlayer().getName()));
+                } else {
+                    ColorHandler.getPlayerColor().put(e.getPlayer(), ChatColor.WHITE);
+                }
+            }*/
+
             UUID uuid = e.getPlayer().getUniqueId();
             if (SettingsData.getSettings("dm", uuid) == null) SettingsData.setSettings("dm", uuid, DmOption.ALL.name());
             if (SettingsData.getSettings("party", uuid) == null)

@@ -44,10 +44,13 @@ public class EventListener implements Listener {
             e.joinMessage(null);
             boolean isOp = false;
             if (e.getPlayer().isOp()) {
+                String wName = e.getPlayer().getWorld().getName();
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
                     e.getPlayer().sendMessage(Main.INDEX + "§e§l숨겨진 관리자 모드§c: §f관리자가 아닌 유저에게서 §e완벽하게 숨겨지지만§f, §c관리자 채팅§f만을 사용 가능하고 대부분의 §9소셜 기능§f을 사용할 수 §c없습니다§f.\n" + Main.INDEX + "§f해제하려면 §b/관리자 공개§f를 입력하세요. 다른 유저들에게 방금 들어온 걸로 표시되며 제한이 모두 해제됩니다.");
                     e.getPlayer().showTitle(Title.title(Component.text("§e숨겨진 관리자 모드"), Component.text("§c유저들이 볼 수 없고, 기능이 제한됩니다. 해제하려면 §b/관리자 공개§c를 입력하세요."), Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(6), Duration.ofSeconds(1))));
-                }, 5);
+                    if (Objects.equals(WorldData.getworldType(wName), WorldData.WorldType.NOT_SET))
+                        e.getPlayer().sendMessage("§c§l주의: §f현재 접속한 월드는 종류가 설정되지 않았습니다. 이는 오류를 발생시킬 수 있으므로 §b/월드 설정 " + wName + " <타입>§f으로 변경하세요.");
+                }, 6);
                 isOp = true;
                 AdminHandler.getAdminChat().put(e.getPlayer(), true);
                 AdminHandler.getAdminReveal().put(e.getPlayer(), false);
@@ -56,9 +59,6 @@ public class EventListener implements Listener {
                     if (p.isOp()) p.sendMessage(Component.text("§7[!] 관리자 §c" + e.getPlayer().getName() + "§7님이 접속했습니다.").append(Main.ADMIN_MSG_SYMBOL));
                     else p.hidePlayer(Main.getPlugin(Main.class), e.getPlayer());
                 }
-            } String wName = e.getPlayer().getWorld().getName();
-            if (Objects.equals(WorldData.getworldType(wName), WorldData.WorldType.NOT_SET)) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> e.getPlayer().sendMessage("§c§l주의: §f현재 접속한 월드는 종류가 설정되지 않았습니다. 이는 오류를 발생시킬 수 있으며 §b/월드 설정 " + wName + " <타입>§f으로 변경하세요."), 10);
             }
 
             UUID uuid = e.getPlayer().getUniqueId();
@@ -195,7 +195,7 @@ public class EventListener implements Listener {
         int tmpTaskId = SCHEDULER.scheduleSyncRepeatingTask(Main.getPlugin(Main.class), () -> {
             ScoreboardManager manager = Bukkit.getScoreboardManager();
             final Scoreboard board = manager.getNewScoreboard();
-            final Objective objective = board.registerNewObjective("test", Criteria.DUMMY, Component.text("내 정보"));
+            final Objective objective = board.registerNewObjective("test", Criteria.DUMMY, Component.text("§e레모니 §a월드"));
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             Score score = objective.getScore(" ");
             score.setScore(10);
@@ -203,7 +203,18 @@ public class EventListener implements Listener {
             nickname.setScore(9);
             Score score1 = objective.getScore("  ");
             score1.setScore(8);
-            Score ping;
+            WorldData.WorldType worldType = WorldData.getworldType(p.getWorld().getName());
+            switch (Objects.requireNonNull(worldType)) {
+                case LOBBY -> {
+                    objective.getScore("§dRPG§f 돈: §6" + Main.getEconomy().format(Main.getEconomy().getBalance(p))).setScore(7);
+                    objective.getScore("§a야생§f 코인: §60").setScore(6);
+                    objective.getScore("    ").setScore(5);
+                } case SURVIVING -> {
+                    objective.getScore("§a야생§f 코인: §60").setScore(7);
+                    objective.getScore("§e일일 퀘스트§f: §a0/0").setScore(6);
+                    objective.getScore("    ").setScore(5);
+                }
+            } Score ping;
             if (p.getPing() < 50)
                 ping = objective.getScore("핑: " + ChatColor.DARK_GREEN + p.getPing() + "ms");
             else if (p.getPing() < 100)
@@ -214,10 +225,6 @@ public class EventListener implements Listener {
                 ping = objective.getScore("핑: " + ChatColor.RED + p.getPing() + "ms");
             else ping = objective.getScore("핑: " + ChatColor.DARK_RED + p.getPing() + "ms");
             ping.setScore(0);
-            Score money = objective.getScore("돈: " + ChatColor.GREEN + Main.getEconomy().format(Main.getEconomy().getBalance(p)));
-            money.setScore(7);
-            Score score5 = objective.getScore("");
-            score5.setScore(6);
             p.setScoreboard(board);
         }, 0, 20L);
         taskId.put(p, tmpTaskId);

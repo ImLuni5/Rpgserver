@@ -1,6 +1,7 @@
 package main.eventhandler;
 
 import main.Main;
+import main.datahandler.WorldData;
 import main.recipehandler.Recipe;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class CraftHandler implements Listener {
     public void onInteract(@NotNull PlayerInteractEvent e) {
         try {
             Block block = e.getClickedBlock();
-            if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
+            if (Objects.equals(WorldData.getworldType(e.getPlayer().getWorld().getName()), WorldData.WorldType.RPG) && block != null && block.getType().equals(Material.CRAFTING_TABLE) && e.getAction().isRightClick()) {
                 e.setCancelled(true);
                 Player p = e.getPlayer();
                 openTable(p);

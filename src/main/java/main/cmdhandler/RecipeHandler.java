@@ -30,6 +30,7 @@ public class RecipeHandler {
                 return;
             }
             if (args.length == 0) {
+                commandSender.sendMessage(INVAILD_USAGE);
                 return;
             }
             switch (args[0]) {

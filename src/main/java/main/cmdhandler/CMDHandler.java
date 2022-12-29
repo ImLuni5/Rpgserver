@@ -2,6 +2,7 @@ package main.cmdhandler;
 
 import main.Main;
 import main.datahandler.FriendData;
+import main.datahandler.WorldData.WorldType;
 import main.recipehandler.Recipe;
 import main.timerhandler.CMDCooldownTimer;
 import org.bukkit.Bukkit;
@@ -168,7 +169,11 @@ public class CMDHandler implements TabExecutor {
                         if (strings[0].equals("추가")) return List.of();
                     }
                     case "월드", "world" -> {
-                        return Arrays.asList("로비", "RPG", "야생", "미니게임");
+                        List<String> toReturn = new ArrayList<>();
+                        for (WorldType w : WorldType.values()) {
+                            toReturn.add(w.name());
+                        } toReturn.remove(WorldType.NOT_SET.name());
+                        return toReturn;
                     }
                 }
             }

@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.*;
@@ -119,7 +120,7 @@ public class EventListener implements Listener {
             e.quitMessage(null);
             boolean isOp = false;
             if (e.getPlayer().isOp()) {
-                if (!AdminHandler.getAdminReveal().get(e.getPlayer()))
+                if (!AdminHandler.getAdminReveal().getOrDefault(e.getPlayer(), false))
                     isOp = true;
                 AdminHandler.getAdminChat().remove(e.getPlayer());
                 AdminHandler.getAdminReveal().remove(e.getPlayer());
@@ -203,6 +204,11 @@ public class EventListener implements Listener {
         if (e.getPlayer().isOp()) {
             e.message(null);
         }
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent e) {
+
     }
 
     public static void setScoreboard(Player p) {

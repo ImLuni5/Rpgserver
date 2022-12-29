@@ -51,7 +51,7 @@ public class TPAHandler {
                             return;
                         }
                         requester.teleport(p);
-                        requester.sendMessage(Main.INDEX + "§e" + p.getName() + "§a님이 텔레포트 요청을 수락했습니다." + getCooldown(p) + " §a후에 다시 텔레포트 요청을 사용할 수 있습니다.");
+                        requester.sendMessage(Main.INDEX + "§e" + p.getName() + "§a님이 텔레포트 요청을 수락했습니다." + getCooldown(requester) + " §a후에 다시 텔레포트 요청을 사용할 수 있습니다.");
                         p.sendMessage(Main.INDEX + "§e" + requester.getName() + "§a님의 텔레포트 요청을 수락했습니다.");
                         TPATimer.getTpaRequest().remove(p);
                         TPATimer.getTpaTimer().remove(p);
@@ -62,7 +62,7 @@ public class TPAHandler {
                             p.sendMessage(Main.INDEX + "§c텔레포트 요청이 없습니다.");
                             return;
                         }
-                        requester.sendMessage(Main.INDEX + "§e" + p.getName() + "§c님이 텔레포트 요청을 거절했습니다." + getCooldown(p) + " §c후에 다시 텔레포트 요청을 사용할 수 있습니다.");
+                        requester.sendMessage(Main.INDEX + "§e" + p.getName() + "§c님이 텔레포트 요청을 거절했습니다." + getCooldown(requester) + " §c후에 다시 텔레포트 요청을 사용할 수 있습니다.");
                         p.sendMessage(Main.INDEX + "§e" + requester.getName() + "§c님의 텔레포트 요청을 거절했습니다.");
                         TPATimer.getTpaRequest().remove(p);
                         TPATimer.getTpaTimer().remove(p);

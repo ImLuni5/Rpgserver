@@ -183,7 +183,6 @@ public class EventListener implements Listener {
         try {
             e.setCancelled(true);
             if (e.getPlayer().isOp() && AdminHandler.getAdminChat().get(e.getPlayer())) {
-                e.setCancelled(true);
                 String format = "§f> §c§l관리자 §4| §r" + ColorHandler.getPlayerColor().get(e.getPlayer()) + e.getPlayer().getName() + "§f: ";
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.isOp()) p.sendMessage(Component.text(format).append(e.message()));
@@ -193,7 +192,6 @@ public class EventListener implements Listener {
             else if (PartyHandler.getIsPartyChat().getOrDefault(e.getPlayer(), false)) {
                 // 파티 채팅
                 e.setCancelled(true);
-
                 TextComponent component = (TextComponent) e.message();
                 for (Player player : PartyHandler.getParty().get(PartyHandler.getPlayerParty().get(e.getPlayer())))
                     if (PartyHandler.getIsPartyOwner().getOrDefault(player, false))

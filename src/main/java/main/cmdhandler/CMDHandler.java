@@ -20,7 +20,7 @@ public class CMDHandler implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         try {
-            if (CMDCooldownTimer.getCMDClickStack().containsKey((Player) commandSender)) {
+            if (commandSender instanceof Player p && CMDCooldownTimer.getCMDClickStack().containsKey(p)) {
                 for (Map.Entry<Player, Integer> e : CMDCooldownTimer.getCMDClickStack().entrySet()) {
                     if (e.getKey().equals(commandSender) && e.getValue() >= 4) {
                         if (e.getValue() < 5) e.setValue(e.getValue() + 1);
@@ -31,7 +31,7 @@ public class CMDHandler implements TabExecutor {
                         break;
                     }
                 }
-            } else CMDCooldownTimer.getCMDClickStack().put((Player) commandSender, 1);
+            } else if (commandSender instanceof Player p) CMDCooldownTimer.getCMDClickStack().put(p, 1);
             switch (s) {
                 case "파티" -> PartyHandler.onCommand(commandSender, strings);
                 case "친구" -> FriendHandler.onCommand(commandSender, strings);
@@ -57,7 +57,6 @@ public class CMDHandler implements TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
         try {
 
-            Player player = (Player) commandSender;
             if (!commandSender.isOp()) {
                 switch (s) {
                     // 관리자가 아닌데 관리자 명령어 tabComplete 시도할 경우 무조건 비어있는 리스트 반환
@@ -74,11 +73,13 @@ public class CMDHandler implements TabExecutor {
                         return Arrays.asList("공개", "채팅");
                     }
                     case "tpa" -> {
-                        List<String> playerList = new ArrayList<>();
-                        for (Player p : Main.getCommonPlayers()) {
-                            playerList.add(p.getName());
-                        } playerList.remove(player.getName());
-                        return playerList;
+                        if (commandSender instanceof Player p) {
+                            List<String> playerList = new ArrayList<>();
+                            for (Player p2 : Main.getCommonPlayers()) {
+                                playerList.add(p2.getName());
+                            } playerList.remove(p.getName());
+                            return playerList;
+                        } else return List.of();
                     }
                     case "tpaccept", "tpdeny", "설정" -> {
                         return List.of();
@@ -90,13 +91,18 @@ public class CMDHandler implements TabExecutor {
                         return Arrays.asList("리로드", "목록", "보기", "수정", "제거", "추가");
                     }
                     case "나침반", "compass" -> {
-                        return List.of("track");
+                        if (commandSender instanceof Player) return List.of("track");
+                        else return List.of();
                     }
                     case "파티" -> {
-                        return Arrays.asList("생성", "해산", "초대", "수락", "거절", "파티장위임", "목록", "강퇴", "채팅", "나가기");
+                        if (commandSender instanceof Player)
+                            return Arrays.asList("생성", "해산", "초대", "수락", "거절", "파티장위임", "목록", "강퇴", "채팅", "나가기");
+                        else return List.of();
                     }
                     case "친구" -> {
-                        return Arrays.asList("추가", "수락", "거절", "삭제", "목록", "차단", "차단목록");
+                        if (commandSender instanceof Player)
+                            return Arrays.asList("추가", "수락", "거절", "삭제", "목록", "차단", "차단목록");
+                        else return List.of();
                     }
                     case "귓속말", "귓말", "귓", "tell", "msg", "w" -> {
                         if (strings[0].isEmpty()) {
@@ -109,7 +115,7 @@ public class CMDHandler implements TabExecutor {
                         }
                     }
                     case "돈" -> {
-                        if (player.isOp()) {
+                        if (commandSender.isOp()) {
                             return Arrays.asList("보내기", "주기", "뺏기");
                         }
                         return List.of("보내기");
@@ -142,21 +148,25 @@ public class CMDHandler implements TabExecutor {
                         }
                     }
                     case "나침반", "compass" -> {
-                        List<String> list = new ArrayList<>(List.of("clear"));
-                        for (Player p : Main.getCommonPlayers())
-                            list.add(p.getName());
-                        return list;
+                        if (commandSender instanceof Player) {
+                            List<String> list = new ArrayList<>(List.of("clear"));
+                            for (Player p : Main.getCommonPlayers())
+                                list.add(p.getName());
+                            return list;
+                        } else return List.of();
                     }
                     case "친구" -> {
-                        if (strings[0].equals("차단")) {
-                            return Arrays.asList("추가", "해제");
-                        } else if (strings[0].equals("삭제")) {
-                            List<String> friendList = new ArrayList<>();
-                            for (String uuid : FriendData.getPlayerFriendList(player.getUniqueId()))
-                                friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
-                            if (friendList.isEmpty()) return List.of();
-                            return friendList;
-                        }
+                        if (commandSender instanceof Player p) {
+                            if (strings[0].equals("차단")) {
+                                return Arrays.asList("추가", "해제");
+                            } else if (strings[0].equals("삭제")) {
+                                List<String> friendList = new ArrayList<>();
+                                for (String uuid : FriendData.getPlayerFriendList(p.getUniqueId()))
+                                    friendList.add(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(uuid))).getName());
+                                if (friendList.isEmpty()) return List.of();
+                                return friendList;
+                            }
+                        } else return List.of();
                     }
                     case "귓속말", "귓말", "귓", "tell", "msg", "w" -> {
                         if (strings[0].equals("설정")) {

@@ -125,7 +125,7 @@ public class IClickHandler implements Listener {
                         if (!p.isOp()) p.sendMessage(Main.INDEX + "§c아직 이 색을 해금하지 않았습니다.");
                         else if (ColorHandler.getPlayerColor().get(p).equals(ChatColor.DARK_RED)) p.sendMessage(Main.INDEX + "§c이미 해당 색상을 사용하고 있습니다.");
                         else {
-                            ColorHandler.getPlayerColor().put(p, ChatColor.DARK_BLUE);
+                            ColorHandler.getPlayerColor().put(p, ChatColor.DARK_RED);
                             p.displayName(Component.text(ChatColor.DARK_RED + p.getName()));
                             p.playerListName(Component.text(ChatColor.DARK_RED + p.getName()));
                             p.sendMessage(Main.INDEX + "§a성공적으로 색깔을 변경하였습니다.");

@@ -28,6 +28,9 @@ public class CompassHandler {
             if (args.length < 2) {
                 p.sendMessage(noArg);
                 return;
+            } else if (!p.isOp()) {
+                p.sendMessage(Main.INDEX + "§c이 명령어를 사용할 권한이 없습니다!");
+                return;
             }
             if (args[0].equals("track")) {
                 if (args[1].equals("clear")) {

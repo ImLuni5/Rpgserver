@@ -93,10 +93,13 @@ public class DMHandler {
             } else if (AdminHandler.isHiddenAdmin(p) && !dm.isOp()) {
                 p.sendMessage(Main.INDEX + "§c현재 모습을 드러내지 않았기 때문에 일반 유저에겐 귓속말을 보낼 수 없습니다. §b/관리자 공개§c를 통해 유저들에게 모습을 드러낸 후 다시 시도하세요.");
                 return;
-            }
+            } StringBuilder message = new StringBuilder();
+            for (int i = 1; i < args.length - 1; i++)
+                message.append(args[i]);
             // 정상적으로 명령어를 쳤을때
-            p.sendMessage(Main.INDEX + "§aYou §7→ §f" + dm.getName() + "§7: §f" + args[1]);
-            dm.sendMessage(Main.INDEX + p.getName() + " §7→ §aYou§7: §f" + args[1]);
+            p.sendMessage(Main.INDEX + "§aYou §7→ §f" + dm.getName() + "§7: §f" + message);
+            dm.sendMessage(Main.INDEX + p.getName() + " §7→ §aYou§7: §f" + message);
+            Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§a" + p.getName() + " §7→  §e" + dm.getName() + "§7: §f" + message);
         } catch (Exception e) {
             Main.printException(e);
         }

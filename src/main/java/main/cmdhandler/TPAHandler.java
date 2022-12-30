@@ -43,6 +43,7 @@ public class TPAHandler {
                         TPATimer.getTpaCooldown().put(p, 90);
                         p.sendMessage(Main.INDEX + "§e" + reciver.getName() + "§a님에게 텔레포트 요청을 보냈습니다. §e60§a초의 수락 시간이 주어집니다.");
                         reciver.sendMessage(Main.INDEX + "§e" + p.getName() + "§a님에게 텔레포트 요청이 왔습니다. §e60§a초 안에 §2/tpaccept§a로 §b수락§a하고, §c/tpdeny§a로 §c거절§a하세요.");
+                        Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§e" + p.getName() + "§f님이 §a" + reciver.getName() + "§f님에게 텔레포트 요청을 보냈습니다.");
                     }
                     case "tpaccept" -> {
                         Player requester = TPATimer.getTpaRequest().get(p);
@@ -55,6 +56,7 @@ public class TPAHandler {
                         p.sendMessage(Main.INDEX + "§e" + requester.getName() + "§a님의 텔레포트 요청을 수락했습니다.");
                         TPATimer.getTpaRequest().remove(p);
                         TPATimer.getTpaTimer().remove(p);
+                        Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§e" + p.getName() + "§f님이 §a" + requester.getName() + "§f님의 텔레포트 요청을 수락했습니다.");
                     }
                     case "tpdeny" -> {
                         Player requester = TPATimer.getTpaRequest().get(p);
@@ -66,6 +68,7 @@ public class TPAHandler {
                         p.sendMessage(Main.INDEX + "§e" + requester.getName() + "§c님의 텔레포트 요청을 거절했습니다.");
                         TPATimer.getTpaRequest().remove(p);
                         TPATimer.getTpaTimer().remove(p);
+                        Bukkit.getConsoleSender().sendMessage(Main.INDEX + "§e" + p.getName() + "§f님이 §a" + requester.getName() + "§f님의 텔레포트 요청을 거절했습니다.");
                     }
                 }
             } else sender.sendMessage(Main.INDEX + "§c이 명령어는 플레이어만 사용할 수 있습니다.");

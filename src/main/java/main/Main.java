@@ -2,7 +2,9 @@ package main;
 
 import main.cmdhandler.AdminHandler;
 import main.cmdhandler.CMDHandler;
+import main.cmdhandler.ColorHandler;
 import main.datahandler.FriendData;
+import main.datahandler.PlayerData;
 import main.datahandler.SettingsData;
 import main.datahandler.WorldData;
 import main.eventhandler.CraftHandler;
@@ -60,6 +62,7 @@ public class Main extends JavaPlugin {
             SettingsData.loadData();
             WorldData.loadData();
             Recipe.loadData();
+            PlayerData.loadData();
 
             // 이벤트 리스너 등록
             Bukkit.getPluginManager().registerEvents(new EventListener(), this);
@@ -83,6 +86,7 @@ public class Main extends JavaPlugin {
             if (!Bukkit.getOnlinePlayers().isEmpty()) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     EventListener.setScoreboard(p);
+                    ColorHandler.getPlayerColor().put(p, ChatColor.valueOf(PlayerData.getPlayerData("nameColor", p.getUniqueId())));
                     if (p.isOp()) {
                         AdminHandler.getAdminChat().put(p, true);
                         AdminHandler.getAdminReveal().put(p, false);

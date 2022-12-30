@@ -44,7 +44,7 @@ public class CMDHandler implements TabExecutor {
                 case "tpa", "tpaccept", "tpdeny" -> TPAHandler.onCommand(commandSender, s, strings);
                 case "관리자", "admin" -> AdminHandler.onCommand(commandSender, strings);
                 case "월드", "world" -> WorldHandler.onCommand(commandSender, strings);
-                /*case "색깔", "color" -> ColorHandler.onCommand(commandSender);*/
+                case "색깔", "color" -> ColorHandler.onCommand(commandSender);
             }
             return false;
         } catch (Exception exception) {

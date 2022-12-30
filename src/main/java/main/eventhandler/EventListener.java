@@ -3,16 +3,21 @@ package main.eventhandler;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import main.Main;
 import main.cmdhandler.AdminHandler;
+import main.cmdhandler.ColorHandler;
 import main.cmdhandler.PartyHandler;
 import main.datahandler.FriendData;
+import main.datahandler.PlayerData;
 import main.datahandler.SettingsData;
 import main.datahandler.SettingsData.DmOption;
 import main.datahandler.SettingsData.FriendOption;
 import main.datahandler.SettingsData.JoinMsgOption;
 import main.datahandler.SettingsData.PartyOption;
 import main.datahandler.WorldData;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -62,19 +67,18 @@ public class EventListener implements Listener {
                 }
             }
 
-            /* todo: 이거 완성 /*
-            /* if (ColorHandler.getPlayerColor().get(e.getPlayer()) == null) {
+            if (PlayerData.getPlayerData("nameColor", e.getPlayer().getUniqueId()) == null) {
                 e.getPlayer().sendMessage(Main.INDEX + "§a색깔 §f§l흰색§a을 흭득했습니다.");
                 e.getPlayer().playSound(Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.MASTER, 100, 1));
                 if (isOp) {
                     e.getPlayer().sendMessage(Main.INDEX + "§a색깔 §4§l짙은 빨간색§a을 흭득했습니다.");
-                    ColorHandler.getPlayerColor().put(e.getPlayer(), ChatColor.DARK_RED);
                     e.getPlayer().displayName(Component.text(ChatColor.DARK_RED + e.getPlayer().getName()));
                     e.getPlayer().playerListName(Component.text(ChatColor.DARK_RED + e.getPlayer().getName()));
-                } else {
-                    ColorHandler.getPlayerColor().put(e.getPlayer(), ChatColor.WHITE);
-                }
-            }*/
+                    PlayerData.setData("nameColor", e.getPlayer().getUniqueId(), ChatColor.DARK_RED.name());
+                } else PlayerData.setData("nameColor", e.getPlayer().getUniqueId(), ChatColor.WHITE.name());
+                PlayerData.saveData();
+            } ColorHandler.getPlayerColor().put(e.getPlayer(), ChatColor.valueOf(PlayerData.getPlayerData("nameColor", e.getPlayer().getUniqueId())));
+
 
             UUID uuid = e.getPlayer().getUniqueId();
             if (SettingsData.getSettings("dm", uuid) == null) SettingsData.setSettings("dm", uuid, DmOption.ALL.name());
@@ -177,22 +181,28 @@ public class EventListener implements Listener {
     @EventHandler
     public void onChat(@NotNull AsyncChatEvent e) {
         try {
+            e.setCancelled(true);
             if (e.getPlayer().isOp() && AdminHandler.getAdminChat().get(e.getPlayer())) {
                 e.setCancelled(true);
+                String format = "§f> §c§l관리자 §4| §r" + ColorHandler.getPlayerColor().get(e.getPlayer()) + e.getPlayer().getName() + "§f: ";
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (p.isOp()) p.sendMessage(Component.text("§f> §c§l관리자 §4| §r§f" + e.getPlayer().getName() + "§f: ").append(e.message()));
-                }
+                    if (p.isOp()) p.sendMessage(Component.text(format).append(e.message()));
+                } Bukkit.getConsoleSender().sendMessage("§e[§c관리자 채팅§e] " + format + ((TextComponent) e.message()).content());
             }
             // 파티 채팅 모드인지 확인
             else if (PartyHandler.getIsPartyChat().getOrDefault(e.getPlayer(), false)) {
                 // 파티 채팅
                 e.setCancelled(true);
+
                 TextComponent component = (TextComponent) e.message();
                 for (Player player : PartyHandler.getParty().get(PartyHandler.getPlayerParty().get(e.getPlayer())))
                     if (PartyHandler.getIsPartyOwner().getOrDefault(player, false))
-                        player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | 파티장 | " + e.getPlayer().getName() + ": " + component.content());
+                        player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | 파티장 | " + ColorHandler.getPlayerColor().get(e.getPlayer()) + e.getPlayer().getName() + "§f: " + component.content());
                     else
-                        player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | " + e.getPlayer().getName() + ": " + component.content());
+                        player.sendMessage(PartyHandler.getPlayerParty().get(e.getPlayer()) + " | " + ColorHandler.getPlayerColor().get(e.getPlayer()) + e.getPlayer().getName() + ":§f " + component.content());
+                Bukkit.getConsoleSender().sendMessage("§e[§b파티 채팅§e] " + PartyHandler.getPlayerParty().get(e.getPlayer()) + " | " + ColorHandler.getPlayerColor().get(e.getPlayer()) + e.getPlayer().getName() + "§f: " + component.content());
+            } else {
+                Bukkit.broadcast(Component.text(ColorHandler.getPlayerColor().get(e.getPlayer()) + "§l" + e.getPlayer().getName()).hoverEvent(HoverEvent.showText(e.getPlayer().name())).append(Component.text("§f: ").append(e.message())));
             }
         } catch (Exception exception) {
             Main.printException(exception);
@@ -219,7 +229,7 @@ public class EventListener implements Listener {
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             Score score = objective.getScore(" ");
             score.setScore(10);
-            Score nickname = objective.getScore("닉네임: " + p.getName());
+            Score nickname = objective.getScore("닉네임: " + ColorHandler.getPlayerColor().get(p) + p.getName());
             nickname.setScore(9);
             Score score1 = objective.getScore("  ");
             score1.setScore(8);

@@ -56,6 +56,7 @@ public class PartyHandler {
                         isPartyOwner.put((Player) commandSender, true);
                         playerParty.put((Player) commandSender, args[1]);
                         commandSender.sendMessage(Main.INDEX + args[1] + "파티가 생성되었습니다.");
+                        Bukkit.getConsoleSender().sendMessage(Main.INDEX + commandSender.getName() + "님이" + args[1] + "파티를 생성했습니다.");
                     }
                 }
                 case "해산" -> {
@@ -68,7 +69,6 @@ public class PartyHandler {
                         isPartyOwner.remove((Player) commandSender);
                         for (Map.Entry<Player, String> entry : playerParty.entrySet()) {
                             if (entry.getValue().equals(partyName)) playerParty.remove(entry.getKey());
-
                         }
                         commandSender.sendMessage(Main.INDEX + "파티가 해산되었습니다.");
                     } else commandSender.sendMessage(Main.INDEX + NOT_OWNER);

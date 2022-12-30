@@ -114,11 +114,12 @@ public class IClickHandler implements Listener {
                 case "색깔 선택" -> {
                     e.setCancelled(true);
                     if (e.getSlot() == ColorHandler.whiteColorSlot) {
-                        if (ColorHandler.getPlayerColor().get(p).equals(ChatColor.WHITE)) p.sendMessage(Main.INDEX + "§c이미 해당 색상을 사용하고 있습니다.");
+                         if (ColorHandler.getPlayerColor().get(p).equals(ChatColor.WHITE)) p.sendMessage(Main.INDEX + "§c이미 해당 색상을 사용하고 있습니다.");
                         else {
                             ColorHandler.getPlayerColor().put(p, ChatColor.WHITE);
                             p.displayName(Component.text(ChatColor.WHITE + p.getName()));
                             p.playerListName(Component.text(ChatColor.WHITE + p.getName()));
+                            p.sendMessage(Main.INDEX + "§a성공적으로 색깔을 변경하였습니다.");
                         } p.closeInventory();
                     } else if (e.getSlot() == ColorHandler.darkRedColorSlot) {
                         if (!p.isOp()) p.sendMessage(Main.INDEX + "§c아직 이 색을 해금하지 않았습니다.");
@@ -127,6 +128,7 @@ public class IClickHandler implements Listener {
                             ColorHandler.getPlayerColor().put(p, ChatColor.DARK_BLUE);
                             p.displayName(Component.text(ChatColor.DARK_RED + p.getName()));
                             p.playerListName(Component.text(ChatColor.DARK_RED + p.getName()));
+                            p.sendMessage(Main.INDEX + "§a성공적으로 색깔을 변경하였습니다.");
                         } p.closeInventory();
                     }
                 }
